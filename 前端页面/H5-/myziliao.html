@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+<meta name="renderer" content="webkit"/>
+<meta name="force-rendering" content="webkit"/>
+
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui"/> -->
+	<!-- <meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="format-detection" content="telephone=no, email=no"/> -->
+	<!-- <meta charset="UTF-8"> -->
+	<title>设置</title>
+	<!-- <link rel="stylesheet" href="themes/css/core.css"> -->
+	<link rel="stylesheet" href="themes/css/icon.css">
+	<link rel="stylesheet" href="themes/css/home.css">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link href="iTunesArtwork@2x.png" sizes="114x114" rel="apple-touch-icon-precomposed">
+  <script src="./themes/js/jquery.min.js"></script>
+<script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+<title></title>
+<link type="text/css" rel="stylesheet" href="./themes/css/style.css" />
+</head>
+<!-- <section class="aui-myOrder-content"> -->
+<body>
+<div class="headerbox">
+  <div class="header">
+    <div class="headerL">
+      <a onclick="javascript:history.back(-1)" class="goback"><img src="./themes/img/goback.png" /></a>
+    </div>
+    <div class="headerC">
+      <p>个人资料</p>
+    </div>
+    <div class="headerR"></div>
+  </div>
+</div>
+<div class="clear"></div>
+<div class="hbox"></div>
+
+<div class="clear"></div>
+<div class="jsdingdan">
+  <div class="jsyf">
+    <div class="jsyfL"><p>萌宝头像：</p></div>
+    <div class="jsyfR"><img id="tx" src="" /></div>
+  </div>
+  <div class="jsyf">
+    <div class="jsyfL">真实姓名：</div>
+    <div class="jsyfR" style="color:#999" id="name"></div>
+  </div>
+  <div class="jsyf">
+    <div class="jsyfL">萌宝昵称：</div>
+    <div class="jsyfR" style="color:#999" id="username"></div>
+  </div>
+  <div class="jsyf">
+    <div class="jsyfL">手机号：</div>
+    <div class="jsyfR" style="color:#999" id="tel"></div>
+  </div>
+  <div class="jsyf">
+    <div class="jsyfL">性别：</div>
+    <div class="jsyfR" style="color:#999" id="sex"></div>
+  </div>
+
+</div>
+<div class="aui-out">
+  <a  id="tc" href="myziliaoupdate.html" >修改资料</a>
+
+</div>
+
+</body>
+<script src="./themes/js/jquery-3.6.0.js"></script>
+<script>
+  // 页面加载时动态查询个人资料
+  abc();
+	function abc(){
+    
+		var token=localStorage.getItem("token_user_uuid");
+		var tel=localStorage.getItem('utel');
+	    // alert(tel);
+		$.ajax({
+			
+            url:"http://localhost/user/txSelect",
+                data:{uTel:tel},
+                headers:{token:token},
+                success:function(response){
+					         var tt =response.data;
+                    localStorage.setItem('uid',tt.uid);
+                   if(response.status==1){
+                   $('#tx').attr('src',response.message);
+				           $("#username").html(tt.uusername);
+				           $("#name").html(tt.uname);
+				           $("#tel").html(tt.utel);
+				           $("#sex").html(tt.usex);
+                   
+				   return;
+				   }
+				   else return;
+           }
+});
+	}
+</script>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="./css/font.css">
+        <link rel="stylesheet" href="./css/xadmin.css">
+        <script src="./lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="./js/xadmin.js"></script>
+        <!--[if lt IE 9]>
+          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                                <div class="layui-inline layui-show-xs-block" style="margin-right: 5px;">
+                                    <input class="layui-input"  autocomplete="off" placeholder="开始日" name="start" id="start">
+                                </div>
+                                <div class="layui-inline layui-show-xs-block" style="margin-right: 5px;">
+                                    <input class="layui-input"  autocomplete="off" placeholder="截止日" name="end" id="end">
+                                </div>
+                                <div class="layui-inline layui-show-xs-block" style="margin-right: 5px;">
+                                    <input type="text" name="username" id="input" placeholder="请输入商品名" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-inline layui-show-xs-block">
+                                  <button class="layui-btn"  lay-submit="" lay-filter="sreach" onclick="search()"><i class="layui-icon">&#xe615;</i></button>
+                                </div>
+                        </div>
+                        <div class="layui-card-header">
+                            <button class="layui-btn layui-btn-danger" onclick="xadmin.open('添加商品','./good-add.html',800,600)"><i class="layui-icon"></i>添加</button>
+                        </div>
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form">
+                              <thead>
+                                <tr>
+                                  <th>商品编号</th>
+                                  <th>商品名字</th>
+                                  <th>商品二级类别</th>
+                                  <th>单价</th>
+                                  <th>订单编号</th>
+                                  <th>商品库存</th>
+                                  <th>上架状态</th>
+                                  <th>主图</th>
+                                  <th>操作</th>
+                              </thead>
+                              <tbody id="tbody">
+
+                              </tbody>
+                            </table>
+                        </div>
+                        <div class="layui-card-body ">
+                            <div class="page">
+                                <div>
+                                  <a class="first" href="javascript:;" onclick="firstPage()" id="first">首页</a>
+                                  <a class="prev" href="javascript:;" onclick="prePage()">&lt;&lt;</a>
+                                  <span class="current" id="current">1</span>
+                                  <a class="next" href="javascript:;" onclick="nextPage()">&gt;&gt;</a>
+                                  <a class="last" href="javascript:;" onclick="endPage()" id="last">尾页</a>
+                                </div>
+                            </div>
+                        </div>
+                        <span  style="position: relative; left: 740px; bottom: 35px;">共<span class="" id="pages"></span>页</span>
+                        <span  style="position: relative; left: 756px; bottom: 35px;">共<span class="" id="total"></span>条数据</span>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </body>
+    <script src="js/jquery-3.6.0.js"></script>
+    <script>
+      
+      var token = localStorage.getItem("token_shangjia_uuid");
+      $.ajax({
+        async:false,
+        url:"http://localhost/goods/queryAllGoods",
+        type:"get",
+        headers:{
+          token:token
+        },
+        data:{pageNum:1,pageSize:7},
+        success:function(resp){
+          var good1=resp.list;
+          for(var good of good1){
+          var tr=$("<tr></tr>");
+          var td1=$("<td>"+good.gid+"</td>");
+          var td2=$("<td>"+good.gname+"</td>");
+          var td3=$("<td>"+findC2name(good.c2Id)+"</td>");
+          var td4=$("<td>"+good.gprice+"</td>");
+          var td5=$("<td>"+good.oid+"</td>");
+          var td6=$("<td>"+good.gnum+"</td>");
+          if(good.gstatus==0){
+            good.gstatus="未上架";
+          }else{
+            good.gstatus="已上架";
+          }
+          var td7=$("<td>"+good.gstatus+"</td>");
+          var gpic=JSON.stringify(good.gpic);
+          var gid=JSON.stringify(good.gid);
+          var td8=$("<td class='td-status'><button type='button' onclick='span1("+gpic+")' class='layui-btn layui-btn-normal layui-btn-mini'>查看</button></td>");
+          var td9=$("<td> <a title='编辑' onclick='edit("+gid+")' href='javascript:;'><i class='layui-icon'>&#xe642;</i></a> <a title='删除' onclick='delete1("+gid+")' href='javascript:;'><i class='layui-icon'>&#xe640;</i></a></td>");
+          tr.append(td1);
+          tr.append(td2);
+          tr.append(td3);
+          tr.append(td4);
+          tr.append(td5);
+          tr.append(td6);
+          tr.append(td7);
+          tr.append(td8);
+          tr.append(td9);
+          $("#tbody").append(tr);
+          }
+          $("#pages").html(resp.pages);
+          $("#total").html(resp.total);
+        }
+      });
+
+      function findC2name(c2Id){
+        var C2name;
+        $.ajax({
+          async:false,
+          url:"http://localhost/classify2/findC2nameByC2id",
+          headers:{
+            token:token
+          },
+          type:"get",
+          data:{c2Id:c2Id},
+          success:function(resp){
+            C2name=resp;
+          }
+        });
+        return C2name;
+      };
+
+      function selectAll(){
+        $(".checkbox").attr('checked');
+      }
+
+      function span1(gpic){
+        // alert("1");
+        // alert(gpic);
+        xadmin.open("查看图片","./photo.html?gpic="+gpic,800,593);
+        // location.href="http://localhost/photo.html?gpic="+gpic;
+        // layer.msg('修改成功', {icon: 1,time:600});
+      }
+
+      function edit(gid){
+        // window.close();
+        xadmin.open("编辑","./good-edit.html?gid="+gid,800,600);
+        // setTimeout("window.close()",1000);
+        
+        // location.href="http://localhost/good-edit.html?gid="+gid;
+      }
+
+      function delete1(gId){
+        layer.confirm('确认要删除吗？',function(){
+          $.ajax({
+          async:false,
+          url:"http://localhost/goods/delete",
+          headers:{
+            token:token
+          },
+          type:"get",
+          data:{gId:gId},
+          success:function(resp){
+            if(resp=="delete ok"){
+              layer.msg('删除成功', {icon: 1,time:1000});
+              setTimeout("location.href='http://localhost/good-list.html';",1200);
+            }else{
+              layer.msg('删除失败',{icon:2,time:600});
+            }
+          }
+        })
+      });
+      }
+
+      function search(){
+        // layer.msg('修改成功', {icon: 1,time:600});
+        var input1=$("#input").val();
+        xadmin.open("查询结果","./good-search.html?input1="+input1,1200,600);
+        // location.href="http://localhost/good-search.html?input1="+input1;
+      }
+      
+      function firstPage() {
+        var pageNum=1;
+        var pagesize=7;
+        requestMethod(pageNum,pagesize);
+        $("#current").html(1);
+    }
+
+    function prePage() {
+        var pageNum=$("#current").html();
+        var pageSize=7;
+        if (parseInt(pageNum)<=1){
+            // pageNum=1;
+            return;
+        }
+        pageNum--;
+        requestMethod(pageNum,pageSize);
+        $("#current").html(pageNum);
+    }
+
+    function nextPage() {
+        var pageNum=$("#current").html();
+        var pageSize=7;
+        var pages=$("#pages").html();
+        if (parseInt(pageNum)>=parseInt(pages)){
+            // pageNum=pages;
+            return;
+        }
+        pageNum++;
+        requestMethod(pageNum,pageSize);
+        $("#current").html(pageNum);
+
+    }
+
+    function endPage() {
+        var pageNum=$("#pages").html();
+        var pageSize=7;
+        requestMethod(pageNum,pageSize);
+        $("#current").html(pageNum);
+    }
+
+    function requestMethod(pageNum,pageSize) {
+      $.ajax({
+        async:false,
+        url:"http://localhost/goods/queryAllGoods",
+        headers:{
+          token:token
+        },
+        type:"get",
+        data:{pageNum:pageNum,pageSize:pageSize},
+        success:function(resp){
+          var trs=$("tr");
+          for(var i=0;i<trs.length;i++){
+            if(i==0){
+              continue;
+            }
+            trs[i].remove();
+          }
+          var good1=resp.list;
+          for(var good of good1){
+          var tr=$("<tr></tr>");
+          var td1=$("<td>"+good.gid+"</td>");
+          var td2=$("<td>"+good.gname+"</td>");
+          var td3=$("<td>"+findC2name(good.c2Id)+"</td>");
+          var td4=$("<td>"+good.gprice+"</td>");
+          var td5=$("<td>"+good.oid+"</td>");
+          var td6=$("<td>"+good.gnum+"</td>");
+          if(good.gstatus==0){
+            good.gstatus="未上架";
+          }else{
+            good.gstatus="已上架";
+          }
+          var td7=$("<td>"+good.gstatus+"</td>");
+          var gpic=JSON.stringify(good.gpic);
+          var gid=JSON.stringify(good.gid);
+          var td8=$("<td class='td-status'><button type='button' onclick='span1("+gpic+")' class='layui-btn layui-btn-normal layui-btn-mini'>查看</button></td>");
+          var td9=$("<td> <a title='编辑' onclick='edit("+gid+")' href='javascript:;'><i class='layui-icon'>&#xe642;</i></a> <a title='删除' onclick='delete1("+gid+")' href='javascript:;'><i class='layui-icon'>&#xe640;</i></a></td>");
+          tr.append(td1);
+          tr.append(td2);
+          tr.append(td3);
+          tr.append(td4);
+          tr.append(td5);
+          tr.append(td6);
+          tr.append(td7);
+          tr.append(td8);
+          tr.append(td9);
+          $("#tbody").append(tr);
+          }
+        }
+      });
+    }
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      layui.use(['laydate','form'], function(){
+        var laydate = layui.laydate;
+        var form = layui.form;
+        
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+      });
+
+       /*用户-停用*/
+      function member_stop(obj,id){
+          layer.confirm('确认要停用吗？',function(index){
+
+              if($(obj).attr('title')=='启用'){
+
+                //发异步把用户状态进行更改
+                $(obj).attr('title','停用')
+                $(obj).find('i').html('&#xe62f;');
+
+                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+                layer.msg('已停用!',{icon: 5,time:1000});
+
+              }else{
+                $(obj).attr('title','启用')
+                $(obj).find('i').html('&#xe601;');
+
+                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+                layer.msg('已启用!',{icon: 5,time:1000});
+              }
+              
+          });
+      }
+
+      /*用户-删除*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+              $(obj).parents("tr").remove();
+              layer.msg('已删除!',{icon:1,time:1000});
+          });
+      }
+
+      function delAll (argument) {
+
+        var data = tableCheck.getData();
+  
+        layer.confirm('确认要删除吗？'+data,function(index){
+            //捉到所有被选中的，发异步进行删除
+            layer.msg('删除成功', {icon: 1});
+            $(".layui-form-checked").not('.header').parents('tr').remove();
+        });
+      }
+
+    </script>
+    <script>var _hmt = _hmt || []; (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();</script>
+</html>

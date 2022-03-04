@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.OrderandgoodsDao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Orderandgoods" id="OrderandgoodsMap">
+        <result property="oagId" column="oag_id" jdbcType="INTEGER"/>
+        <result property="oId" column="o_id" jdbcType="INTEGER"/>
+        <result property="gId" column="g_id" jdbcType="INTEGER"/>
+        <result property="gNum" column="g_num" jdbcType="INTEGER"/>
+        <result property="oag1" column="oag_1" jdbcType="VARCHAR"/>
+        <result property="oag2" column="oag_2" jdbcType="VARCHAR"/>
+        <result property="oag3" column="oag_3" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!-- 带商品对象的结果集 -->
+    <resultMap type="com.hs.entity.Orderandgoods" id="OrderandgoodsMap2">
+        <result property="oagId" column="oag_id" jdbcType="INTEGER"/>
+        <result property="oId" column="o_id" jdbcType="INTEGER"/>
+        <result property="gId" column="g_id" jdbcType="INTEGER"/>
+        <result property="gNum" column="g_num" jdbcType="INTEGER"/>
+        <result property="oag1" column="oag_1" jdbcType="VARCHAR"/>
+        <result property="oag2" column="oag_2" jdbcType="VARCHAR"/>
+        <result property="oag3" column="oag_3" jdbcType="VARCHAR"/>
+        <association property="goods" column="g_id" javaType="com.hs.entity.Goods"
+        select="com.hs.mapper.GoodsDao.selectById">
+        </association>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        oag_id, o_id, g_id, g_num, oag_1, oag_2, oag_3    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="OrderandgoodsMap">
+        select
+          <include refid="Base_Column_List" />
+        from orderandgoods
+        where oag_id = #{oagId}
+    </select>
+
+    <select id="selectById1" resultMap="OrderandgoodsMap">
+        select
+        <include refid="Base_Column_List" />
+        from orderandgoods
+        where o_id = #{oid}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="OrderandgoodsMap">
+        select
+        <include refid="Base_Column_List" />
+        from orderandgoods
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="OrderandgoodsMap">
+        select
+        <include refid="Base_Column_List" />
+        from orderandgoods
+    </select>
+
+    <!-- 查询全部包括商品 -->
+    <select id="selectAllWithGoods" resultMap="OrderandgoodsMap2">
+        select
+        <include refid="Base_Column_List" />
+        from orderandgoods
+        where o_id = #{oId}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="OrderandgoodsMap">
+        select
+        <include refid="Base_Column_List" />
+        from orderandgoods
+        <where>
+                    <if test="oagId != null">
+                and oag_id = #{oagId}
+            </if>
+                    <if test="oId != null">
+                and o_id = #{oId}
+            </if>
+                    <if test="gId != null">
+                and g_id = #{gId}
+            </if>
+                    <if test="gNum != null">
+                and g_num = #{gNum}
+            </if>
+                    <if test="oag1 != null and oag1 != ''">
+                and oag_1 = #{oag1}
+            </if>
+                    <if test="oag2 != null and oag2 != ''">
+                and oag_2 = #{oag2}
+            </if>
+                    <if test="oag3 != null and oag3 != ''">
+                and oag_3 = #{oag3}
+            </if>
+                </where>
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="oagId" useGeneratedKeys="true">
+        insert into orderandgoods(oag_id, o_id, g_id, g_num, oag_1, oag_2, oag_3)
+        values ( #{oagId}, #{oId}, #{gId}, #{gNum}, #{oag1}, #{oag2}, #{oag3})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into orderandgoods(oag_id, o_id, g_id, g_num, oag_1, oag_2, oag_3)
+        values 
+        <foreach collection="orderandgoodss" item="item" index="index" separator=",">
+        (
+                        #{item.oagId},             #{item.oId},             #{item.gId},             #{item.gNum},             #{item.oag1},             #{item.oag2},             #{item.oag3}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.orderandgoods
+        <set>
+                    <if test="oId != null">
+                o_id = #{oId},
+            </if>
+                    <if test="gId != null">
+                g_id = #{gId},
+            </if>
+                    <if test="gNum != null">
+                g_num = #{gNum},
+            </if>
+                    <if test="oag1 != null and oag1 != ''">
+                oag_1 = #{oag1},
+            </if>
+                    <if test="oag2 != null and oag2 != ''">
+                oag_2 = #{oag2},
+            </if>
+                    <if test="oag3 != null and oag3 != ''">
+                oag_3 = #{oag3},
+            </if>
+                </set>
+        where oag_id = #{oagId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from orderandgoods where oag_id = #{oagId}
+    </delete>
+
+    <delete id="deleteByOid" parameterType="int">
+        delete from orderandgoods where o_id=#{oid}
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from orderandgoods
+    </select>
+</mapper>

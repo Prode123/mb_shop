@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.Classify2Dao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Classify2" id="Classify2Map">
+        <result property="c2Id" column="c2_id" jdbcType="INTEGER"/>
+        <result property="c2Name" column="c2_name" jdbcType="VARCHAR"/>
+        <result property="c1Id" column="c1_id" jdbcType="INTEGER"/>
+        <result property="c21" column="c2_1" jdbcType="VARCHAR"/>
+        <result property="c22" column="c2_2" jdbcType="VARCHAR"/>
+        <result property="c23" column="c2_3" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        c2_id, c2_name, c1_id, c2_1, c2_2, c2_3    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="Classify2Map">
+        select
+          <include refid="Base_Column_List" />
+        from classify2
+        where c2_id = #{c2Id}
+    </select>
+
+<!--  gm  通过C1_id查询数据-->
+    <select id="selectByc1id" resultMap="Classify2Map" >
+        select
+            <include refid="Base_Column_List" />
+        from classify2
+        where c1_id = #{c1Id}
+    </select>
+<!--  gm 通过name查询数据-->
+    <select id="selectByName" resultMap="Classify2Map">
+        select
+        <include refid="Base_Column_List" />
+        from classify2
+        where c2_name = #{c2Name}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="Classify2Map">
+        select
+        <include refid="Base_Column_List" />
+        from classify2
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="Classify2Map">
+        select
+        <include refid="Base_Column_List" />
+        from classify2
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="Classify2Map">
+        select
+        <include refid="Base_Column_List" />
+        from classify2
+        <where>
+                    <if test="c2Id != null">
+                and c2_id = #{c2Id}
+            </if>
+                    <if test="c2Name != null and c2Name != ''">
+                and c2_name = #{c2Name}
+            </if>
+                    <if test="c1Id != null">
+                and c1_id = #{c1Id}
+            </if>
+                    <if test="c21 != null and c21 != ''">
+                and c2_1 = #{c21}
+            </if>
+                    <if test="c22 != null and c22 != ''">
+                and c2_2 = #{c22}
+            </if>
+                    <if test="c23 != null and c23 != ''">
+                and c2_3 = #{c23}
+            </if>
+                </where>
+    </select>
+
+    <!--  gm 新增所有列 -->
+    <insert id="insert" keyProperty="c2Id" useGeneratedKeys="true">
+        insert into classify2(c2_id, c2_name, c1_id, c2_1, c2_2, c2_3)
+        values ( null, #{c2Name}, #{c1Id}, null, null, null)
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into classify2(c2_id, c2_name, c1_id, c2_1, c2_2, c2_3)
+        values 
+        <foreach collection="classify2s" item="item" index="index" separator=",">
+        (
+                        #{item.c2Id},             #{item.c2Name},             #{item.c1Id},             #{item.c21},             #{item.c22},             #{item.c23}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.classify2
+        <set>
+                    <if test="c2Name != null and c2Name != ''">
+                c2_name = #{c2Name},
+            </if>
+                    <if test="c1Id != null">
+                c1_id = #{c1Id},
+            </if>
+                    <if test="c21 != null and c21 != ''">
+                c2_1 = #{c21},
+            </if>
+                    <if test="c22 != null and c22 != ''">
+                c2_2 = #{c22},
+            </if>
+                    <if test="c23 != null and c23 != ''">
+                c2_3 = #{c23},
+            </if>
+                </set>
+        where c2_id = #{c2Id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from classify2 where c2_id = #{c2Id}
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from classify2
+    </select>
+</mapper>

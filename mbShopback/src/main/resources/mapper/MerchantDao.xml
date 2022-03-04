@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.MerchantDao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Merchant" id="MerchantMap">
+        <result property="mId" column="m_id" jdbcType="INTEGER"/>
+        <result property="mName" column="m_name" jdbcType="VARCHAR"/>
+        <result property="mTel" column="m_tel" jdbcType="VARCHAR"/>
+        <result property="mPasswd" column="m_passwd" jdbcType="VARCHAR"/>
+        <result property="gId" column="g_id" jdbcType="INTEGER"/>
+        <result property="m1" column="m_1" jdbcType="VARCHAR"/>
+        <result property="m2" column="m_2" jdbcType="VARCHAR"/>
+        <result property="m3" column="m_3" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        m_id, m_name, m_tel, m_passwd, g_id, m_1, m_2, m_3    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="MerchantMap">
+        select
+          <include refid="Base_Column_List" />
+        from merchant
+        where m_id = #{mId}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="MerchantMap">
+        select
+        <include refid="Base_Column_List" />
+        from merchant
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="MerchantMap">
+        select
+        <include refid="Base_Column_List" />
+        from merchant
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="MerchantMap">
+        select
+        <include refid="Base_Column_List" />
+        from merchant
+        <where>
+                    <if test="mId != null">
+                and m_id = #{mId}
+            </if>
+                    <if test="mName != null and mName != ''">
+                and m_name = #{mName}
+            </if>
+                    <if test="mTel != null and mTel != ''">
+                and m_tel = #{mTel}
+            </if>
+                    <if test="mPasswd != null and mPasswd != ''">
+                and m_passwd = #{mPasswd}
+            </if>
+                    <if test="gId != null">
+                and g_id = #{gId}
+            </if>
+                    <if test="m1 != null and m1 != ''">
+                and m_1 = #{m1}
+            </if>
+                    <if test="m2 != null and m2 != ''">
+                and m_2 = #{m2}
+            </if>
+                    <if test="m3 != null and m3 != ''">
+                and m_3 = #{m3}
+            </if>
+                </where>
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="mId" useGeneratedKeys="true">
+        insert into merchant(m_id, m_name, m_tel, m_passwd, g_id, m_1, m_2, m_3)
+        values ( #{mId}, #{mName}, #{mTel}, #{mPasswd}, #{gId}, #{m1}, #{m2}, #{m3})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into merchant(m_id, m_name, m_tel, m_passwd, g_id, m_1, m_2, m_3)
+        values 
+        <foreach collection="merchants" item="item" index="index" separator=",">
+        (
+                        #{item.mId},             #{item.mName},             #{item.mTel},             #{item.mPasswd},             #{item.gId},             #{item.m1},             #{item.m2},             #{item.m3}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.merchant
+        <set>
+                    <if test="mName != null and mName != ''">
+                m_name = #{mName},
+            </if>
+                    <if test="mTel != null and mTel != ''">
+                m_tel = #{mTel},
+            </if>
+                    <if test="mPasswd != null and mPasswd != ''">
+                m_passwd = #{mPasswd},
+            </if>
+                    <if test="gId != null">
+                g_id = #{gId},
+            </if>
+                    <if test="m1 != null and m1 != ''">
+                m_1 = #{m1},
+            </if>
+                    <if test="m2 != null and m2 != ''">
+                m_2 = #{m2},
+            </if>
+                    <if test="m3 != null and m3 != ''">
+                m_3 = #{m3},
+            </if>
+                </set>
+        where m_id = #{mId}
+    </update>
+
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from merchant where m_id = #{mId}
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from merchant
+    </select>
+
+    <!-- 通过商家手机号查询密码 仅用于登录   -->
+    <select id="querryByTel" resultType="com.hs.entity.Merchant">
+        select * from merchant where m_tel=#{mTel}
+    </select>
+
+</mapper>

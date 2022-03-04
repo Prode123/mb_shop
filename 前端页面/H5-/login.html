@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="format-detection" content="telephone=no, email=no"/>
+	<meta charset="UTF-8">
+	<title>用户登录</title>
+	<link rel="stylesheet" href="themes/css/core.css">
+	<link rel="stylesheet" href="themes/css/icon.css">
+	<link rel="stylesheet" href="themes/css/home.css">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link href="iTunesArtwork@2x.png" sizes="114x114" rel="apple-touch-icon-precomposed">
+	<style>
+		.m-cell {
+			background-color: #FFF;
+			/* position: relative; */
+			z-index: 1;
+			margin-bottom: .35rem;
+			height: 3rem;
+			line-height: 3rem;
+		}
+		/* 有些资料显示需要写，有些显示不需要，但是在编辑器webstorm中该属性不被识别 */
+		::-webkit-input-placeholder {
+			/* WebKit browsers */
+			color: #888;
+		}
+
+		:-moz-placeholder {
+			/* Mozilla Firefox 4 to 18 */
+			color: #888;
+		}
+
+		::-moz-placeholder {
+			/* Mozilla Firefox 19+ */
+			color: #888;
+		}
+
+		:-ms-input-placeholder {
+			/* Internet Explorer 10+ */
+			color: #888;
+		}
+        .red-color{
+           margin: -10px;
+          margin-left: 0px;
+        }
+		.sec{
+			padding-top: 35px;
+		}
+	</style>
+
+</head>
+<body style="background:#eee">
+
+	<header class="aui-header-default aui-header-fixed ">
+		<a href="javascript:history.back(-1)" class="aui-header-item">
+			<i id="jt" class="aui-icon aui-icon-back"></i>
+		</a>
+		<!-- <div class="aui-header-center aui-header-center-clear">
+			<div class="aui-header-center-logo">
+				<div class="">设置</div>
+			</div>
+		</div> -->
+		<!-- <a href="#" class="aui-header-item-icon"   style="min-width:0">
+			<i class="aui-icon aui-icon-share-pd"></i>
+		</a> -->
+	</header>
+<section class="sec">
+		<div class="aui-Address-box" >
+           
+			<div style="height: 115px; text-align: center; line-height: 150px;">
+				<div style="display: inline-block;">
+					<!-- <img src="iTunesArtwork@2x.png" alt=""> -->
+					<img id="tx" src="http://localhost/img/comeIn.png" alt="" width="100px" height="100px">
+					<!-- <img src="\\\\169.254.40.220\\img" alt=""> -->
+				</div>
+			</div>
+			<p  >
+				<!-- <hr> -->
+				<input class="aui-Address-box-input" type="text" id="username"  placeholder="请输入手机号">
+			</p>
+			<p>
+				<input class="aui-Address-box-input" type="password" id="passwd" placeholder="密码">
+				<!-- <hr> -->
+			</p>
+		
+		</div>
+
+        <div class="aui-out">
+			<a href="register.html" class="red-color" style="color:#fff">还没有账号？点我注册</a>
+		</div>
+		<div class="aui-out">
+			<a class="red-color" style="color:#fff" id="login_user">点击登录</a>
+		</div>
+	</section>
+	<script src="./themes/js/jquery.min.js"></script>
+
+     <script>
+        $("#login_user").click(function(){
+            var tel = $("#username").val();
+			
+			localStorage.setItem('utel',tel);
+			// alert(localStorage.getItem('utel'));
+            var upasswd = $("#passwd").val();
+            var token = localStorage.getItem("token_user_uuid");
+            $.ajax({
+                headers:{
+                    token:token
+                },
+                
+                url:"http://localhost/user/login",
+              
+                data:{uTel:tel,uPasswd:upasswd},
+                success:function(response){
+
+                    // alert(response.status);
+                    if(response.status == 1){
+
+                        var tt=response.data;
+                        
+                       
+                        // uid为用户的id
+                        localStorage.setItem('token_user_uid',tt.uid);
+						// tval为32位的token值
+                        localStorage.setItem('token_user_uuid',tt.tval);
+						// 登录成功状态才为1
+                        localStorage.setItem('token_user_status',tt.ustatus);
+                        // //    接收用户名
+                        // localStorage.setItem('uusername',tt.uusername);
+                        // alert(uusername);
+                        
+                        alert("登录成功，点击确定跳转到首页");
+                        location.href = "ui-me.html";
+                       
+                    }
+                    if(response.status == 0){
+                        alert("没有该用户或账号已被冻结");
+                        return;
+                    }
+                    if(response.status==2){
+                        alert("密码错误");
+                        return;
+                    }
+                }
+            })
+        })
+
+        //   失去手机号焦点事件 
+		$(document).ready(function(){
+          $('#username').blur(function(){
+            var tel = $("#username").val();
+			$.ajax({
+                url:"http://localhost/user/txSelect",
+                data:{uTel:tel},
+                success:function(response){
+                
+                   if(response.status==1){
+                   $('#tx').attr('src',response.message); 
+				   return;
+				   }
+				   else return;
+                   
+                }
+
+		  });
+
+		});
+		});
+
+
+		//未登录返回首页事件
+		$("#jt").click(function() {
+			location.href="index.html";
+		});
+
+     </script>
+
+</body>
+</html>

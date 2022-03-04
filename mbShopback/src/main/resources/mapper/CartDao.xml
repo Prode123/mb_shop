@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.CartDao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Cart" id="CartMap">
+        <result property="carId" column="car_id" jdbcType="INTEGER"/>
+        <result property="uId" column="u_id" jdbcType="INTEGER"/>
+        <result property="gId" column="g_id" jdbcType="INTEGER"/>
+        <result property="numId" column="num_id" jdbcType="INTEGER"/>
+        <result property="car1" column="car_1" jdbcType="VARCHAR"/>
+        <result property="car2" column="car_2" jdbcType="VARCHAR"/>
+        <result property="car3" column="car_3" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        car_id, u_id, g_id, num_id, car_1, car_2, car_3    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="CartMap">
+        select
+          <include refid="Base_Column_List" />
+        from cart
+        where car_id = #{carId}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="CartMap">
+        select
+        <include refid="Base_Column_List" />
+        from cart
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="CartMap">
+        select
+        <include refid="Base_Column_List" />
+        from cart
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="CartMap">
+        select
+        <include refid="Base_Column_List" />
+        from cart
+        <where>
+                    <if test="carId != null">
+                and car_id = #{carId}
+            </if>
+                    <if test="uId != null">
+                and u_id = #{uId}
+            </if>
+                    <if test="gId != null">
+                and g_id = #{gId}
+            </if>
+                    <if test="numId != null">
+                and num_id = #{numId}
+            </if>
+                    <if test="car1 != null and car1 != ''">
+                and car_1 = #{car1}
+            </if>
+                    <if test="car2 != null and car2 != ''">
+                and car_2 = #{car2}
+            </if>
+                    <if test="car3 != null and car3 != ''">
+                and car_3 = #{car3}
+            </if>
+                </where>
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="carId" useGeneratedKeys="true">
+        insert into cart(car_id, u_id, g_id, num_id, car_1, car_2, car_3)
+        values ( #{carId}, #{uId}, #{gId}, #{numId}, #{car1}, #{car2}, #{car3})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into cart(car_id, u_id, g_id, num_id, car_1, car_2, car_3)
+        values 
+        <foreach collection="carts" item="item" index="index" separator=",">
+        (
+                        #{item.carId},             #{item.uId},             #{item.gId},             #{item.numId},             #{item.car1},             #{item.car2},             #{item.car3}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.cart
+        <set>
+                    <if test="uId != null">
+                u_id = #{uId},
+            </if>
+                    <if test="gId != null">
+                g_id = #{gId},
+            </if>
+                    <if test="numId != null">
+                num_id = #{numId},
+            </if>
+                    <if test="car1 != null and car1 != ''">
+                car_1 = #{car1},
+            </if>
+                    <if test="car2 != null and car2 != ''">
+                car_2 = #{car2},
+            </if>
+                    <if test="car3 != null and car3 != ''">
+                car_3 = #{car3},
+            </if>
+                </set>
+        where car_id = #{carId}
+    </update>
+
+    <!-- 通过主键批量修改数据1 -->
+    <update id="updateDaoCar1" parameterType="java.util.Arrays">
+        update mbshop.cart
+        set car_1 = 1
+        where car_id in
+        <foreach collection="array" item="i" index="index" open="(" close=")" separator=",">
+            #{i}
+        </foreach>
+    </update>
+
+    <!-- 通过主键批量修改car1，将其置为0 -->
+    <update id="updateDaoCar1To0">
+        update mbshop.cart
+        set car_1 = 0
+        where u_id = #{uId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cart where car_id = #{carId}
+    </delete>
+
+    <!--通过主键删除-->
+    <delete id="deleteBuyAlready">
+        delete from cart where u_id = #{uId} and car_1 = 1
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from cart
+    </select>
+</mapper>

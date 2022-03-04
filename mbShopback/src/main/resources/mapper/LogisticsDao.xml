@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.LogisticsDao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Logistics" id="LogisticsMap">
+        <result property="logId" column="log_id" jdbcType="INTEGER"/>
+        <result property="logTime" column="log_time" jdbcType="TIMESTAMP"/>
+        <result property="logAdd" column="log_add" jdbcType="VARCHAR"/>
+        <result property="oId" column="o_id" jdbcType="INTEGER"/>
+        <result property="logStatus" column="log_status" jdbcType="INTEGER"/>
+        <result property="log1" column="log_1" jdbcType="VARCHAR"/>
+        <result property="log2" column="log_2" jdbcType="VARCHAR"/>
+        <result property="log3" column="log_3" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        log_id, log_time, log_add, o_id, log_status, log_1, log_2, log_3    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="LogisticsMap">
+        select
+          <include refid="Base_Column_List" />
+        from logistics
+        where log_id = #{logId}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="LogisticsMap">
+        select
+        <include refid="Base_Column_List" />
+        from logistics
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="LogisticsMap">
+        select
+        <include refid="Base_Column_List" />
+        from logistics
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="LogisticsMap">
+        select
+        <include refid="Base_Column_List" />
+        from logistics
+        <where>
+                    <if test="logId != null">
+                and log_id = #{logId}
+            </if>
+                    <if test="logTime != null">
+                and log_time = #{logTime}
+            </if>
+                    <if test="logAdd != null and logAdd != ''">
+                and log_add = #{logAdd}
+            </if>
+                    <if test="oId != null">
+                and o_id = #{oId}
+            </if>
+                    <if test="logStatus != null">
+                and log_status = #{logStatus}
+            </if>
+                    <if test="log1 != null and log1 != ''">
+                and log_1 = #{log1}
+            </if>
+                    <if test="log2 != null and log2 != ''">
+                and log_2 = #{log2}
+            </if>
+                    <if test="log3 != null and log3 != ''">
+                and log_3 = #{log3}
+            </if>
+                </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询并且有起始日期和终止日期-->
+    <select id="selectListWithTime" resultMap="LogisticsMap">
+        select
+        <include refid="Base_Column_List" />
+        from logistics
+        <where>
+            <if test="startTime != null">
+                and log_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and log_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="logStatus != null">
+                and log_status = #{logStatus}
+            </if>
+            <if test="oId != null">
+                and o_id = #{oId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectLogisticsByOid" parameterType="int" resultMap="LogisticsMap">
+        select * from logistics where o_id=#{oid}
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="logId" useGeneratedKeys="true">
+        insert into logistics(log_id, log_time, log_add, o_id, log_status, log_1, log_2, log_3)
+        values ( #{logId}, #{logTime}, #{logAdd}, #{oId}, #{logStatus}, #{log1}, #{log2}, #{log3})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into logistics(log_id, log_time, log_add, o_id, log_status, log_1, log_2, log_3)
+        values 
+        <foreach collection="logisticss" item="item" index="index" separator=",">
+        (
+                        #{item.logId},             #{item.logTime},             #{item.logAdd},             #{item.oId},             #{item.logStatus},             #{item.log1},             #{item.log2},             #{item.log3}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.logistics
+        <set>
+                    <if test="logTime != null">
+                log_time = #{logTime},
+            </if>
+                    <if test="logAdd != null and logAdd != ''">
+                log_add = #{logAdd},
+            </if>
+                    <if test="oId != null">
+                o_id = #{oId},
+            </if>
+                    <if test="logStatus != null">
+                log_status = #{logStatus},
+            </if>
+                    <if test="log1 != null and log1 != ''">
+                log_1 = #{log1},
+            </if>
+                    <if test="log2 != null and log2 != ''">
+                log_2 = #{log2},
+            </if>
+                    <if test="log3 != null and log3 != ''">
+                log_3 = #{log3},
+            </if>
+                </set>
+        where log_id = #{logId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from logistics where log_id = #{logId}
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from logistics
+    </select>
+</mapper>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.OrderrDao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Orderr" id="OrderrMap">
+        <result property="oId" column="o_id" jdbcType="INTEGER"/>
+        <result property="oStatus" column="o_status" jdbcType="INTEGER"/>
+        <result property="uId" column="u_id" jdbcType="INTEGER"/>
+        <result property="aId" column="a_id" jdbcType="INTEGER"/>
+        <result property="oPrice" column="o_price" jdbcType="OTHER"/>
+        <result property="oTime" column="o_time" jdbcType="TIMESTAMP"/>
+        <result property="mId" column="m_id" jdbcType="INTEGER"/>
+        <result property="o1" column="o_1" jdbcType="VARCHAR"/>
+        <result property="o2" column="o_2" jdbcType="VARCHAR"/>
+        <result property="o3" column="o_3" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Orderr" id="OrderrMap2">
+        <result property="oId" column="o_id" jdbcType="INTEGER"/>
+        <result property="oStatus" column="o_status" jdbcType="INTEGER"/>
+        <result property="uId" column="u_id" jdbcType="INTEGER"/>
+        <result property="aId" column="a_id" jdbcType="INTEGER"/>
+        <result property="oPrice" column="o_price" jdbcType="OTHER"/>
+        <result property="oTime" column="o_time" jdbcType="TIMESTAMP"/>
+        <result property="mId" column="m_id" jdbcType="INTEGER"/>
+        <result property="o1" column="o_1" jdbcType="VARCHAR"/>
+        <result property="o2" column="o_2" jdbcType="VARCHAR"/>
+        <result property="o3" column="o_3" jdbcType="VARCHAR"/>
+        <association property="address" column="a_id" javaType="com.hs.entity.Address"
+        select="com.hs.mapper.AddressDao.selectById">
+        </association>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        o_id, o_status, u_id, a_id, o_price, o_time, m_id, o_1, o_2, o_3    </sql>
+
+    <sql id="bb">
+g_name ,orderr.o_price,OrderAndGoods.g_num  </sql>
+    <!--    报表映射  gm -->
+    <resultMap id="baobiao" type="com.hs.entity.BaoBiao">
+        <result property="pName" column="g_name" jdbcType="VARCHAR"/>
+        <result property="price" column="o_price" jdbcType="DOUBLE"/>
+        <result property="sales" column="g_num" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+    <select id="findAllbb" resultMap="baobiao">
+        select <include refid="bb" />
+        from orderr,OrderAndGoods,Goods
+        where OrderAndGoods.o_id=orderr.o_id and Goods.g_id=OrderAndGoods.g_id and o_Status=2
+        order by OrderAndGoods.g_num desc limit 5
+    </select>
+
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="OrderrMap">
+        select
+          <include refid="Base_Column_List" />
+        from orderr
+        where o_id = #{oId}
+    </select>
+
+    <!-- 通过uid和o3查询单个 -->
+    <select id="selectByUidAndO3" resultMap="OrderrMap">
+        select
+        <include refid="Base_Column_List" />
+        from orderr
+        where u_id = #{uId} and o_3 = 1
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="OrderrMap">
+        select
+        <include refid="Base_Column_List" />
+        from orderr
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="OrderrMap">
+        select
+        <include refid="Base_Column_List" />
+        from orderr
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="OrderrMap">
+        select
+        <include refid="Base_Column_List" />
+        from orderr
+        <where>
+                    <if test="oId != null">
+                and o_id = #{oId}
+            </if>
+                    <if test="oStatus != null">
+                and o_status = #{oStatus}
+            </if>
+                    <if test="uId != null">
+                and u_id = #{uId}
+            </if>
+                    <if test="aId != null">
+                and a_id = #{aId}
+            </if>
+                    <if test="oPrice != null">
+                and o_price = #{oPrice}
+            </if>
+                    <if test="oTime != null">
+                and o_time = #{oTime}
+            </if>
+                    <if test="mId != null">
+                and m_id = #{mId}
+            </if>
+                    <if test="o1 != null and o1 != ''">
+                and o_1 = #{o1}
+            </if>
+                    <if test="o2 != null and o2 != ''">
+                and o_2 = #{o2}
+            </if>
+                    <if test="o3 != null and o3 != ''">
+                and o_3 = #{o3}
+            </if>
+                </where>
+    </select>
+
+<!--    通过时间订单编号等查询所有满足条件的订单-->
+    <select id="selectListWithTime" resultMap="OrderrMap2">
+        select
+        *
+        from orderr
+        <where>
+            <if test="oId != null">
+                and o_id = #{oId}
+            </if>
+            <if test="oStatus != null">
+                and o_status = #{oStatus}
+            </if>
+            <if test="startTime != null">
+                and o_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and o_time <![CDATA[<=]]> #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="oId" useGeneratedKeys="true">
+        insert into orderr(o_id, o_status, u_id, a_id, o_price, o_time, m_id, o_1, o_2, o_3)
+        values ( #{oId}, #{oStatus}, #{uId}, #{aId}, #{oPrice}, #{oTime}, #{mId}, #{o1}, #{o2}, #{o3})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into orderr(o_id, o_status, u_id, a_id, o_price, o_time, m_id, o_1, o_2, o_3)
+        values 
+        <foreach collection="orderrs" item="item" index="index" separator=",">
+        (
+                        #{item.oId},             #{item.oStatus},             #{item.uId},             #{item.aId},             #{item.oPrice},             #{item.oTime},             #{item.mId},             #{item.o1},             #{item.o2},             #{item.o3}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.orderr
+        <set>
+                    <if test="oStatus != null">
+                o_status = #{oStatus},
+            </if>
+                    <if test="uId != null">
+                u_id = #{uId},
+            </if>
+                    <if test="aId != null">
+                a_id = #{aId},
+            </if>
+                    <if test="oPrice != null">
+                o_price = #{oPrice},
+            </if>
+                    <if test="oTime != null">
+                o_time = #{oTime},
+            </if>
+                    <if test="mId != null">
+                m_id = #{mId},
+            </if>
+                    <if test="o1 != null and o1 != ''">
+                o_1 = #{o1},
+            </if>
+                    <if test="o2 != null and o2 != ''">
+                o_2 = #{o2},
+            </if>
+                    <if test="o3 != null and o3 != ''">
+                o_3 = #{o3},
+            </if>
+                </set>
+        where o_id = #{oId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from orderr where o_id = #{oId}
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from orderr
+    </select>
+</mapper>

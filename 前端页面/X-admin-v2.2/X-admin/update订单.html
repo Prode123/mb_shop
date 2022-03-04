@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="./css/font.css">
+        <!-- <link rel="stylesheet" href="./css/xadmin.css"> -->
+        <!-- <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script> -->
+        <!-- <script type="text/javascript" src="./js/xadmin.js"></script> -->
+        <script src="./js/jquery.min.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+            <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+            <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]--></head>
+    
+    <body>
+        <div>
+            <div>
+                <form>
+                    <div  style="margin-left: 490px; margin-top: 170px;">
+                        <label>
+                            订单状态</label>
+                            <select id="orderStatus" name="orderStatus" >
+                                <option value="">订单状态</option>
+                                <option value="1">未支付</option>
+                                <option value="2">已支付</option>
+                            </select>
+                    </div>
+                    <hr style="margin-top: 40px;margin-bottom: 40px;">
+                    <input id="orderUpdate" type="button" value="修改"
+                    style="margin-left: 550px;">
+                </form>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- <script>
+            layui.use(['form', 'layer'],
+            function(){
+
+            })
+        </script> -->
+
+        <script>
+        layui.use(['form', 'layer'],
+            function() {
+                $ = layui.jquery;
+                var form = layui.form,
+                layer = layui.layer;
+
+                //自定义验证规则
+                // form.verify({
+                //     nikename: function(value) {
+                //         if (value.length < 5) {
+                //             return '昵称至少得5个字符啊';
+                //         }
+                //     },
+                //     pass: [/(.+){6,12}$/, '密码必须6到12位'],
+                //     repass: function(value) {
+                //         if ($('#L_pass').val() != $('#L_repass').val()) {
+                //             return '两次密码不一致';
+                //         }
+                //     }
+                // });
+
+                //监听提交
+                // form.on('submit(add)',
+                // function(data) {
+                //     console.log(data);
+                //     //发异步，把数据提交给php
+                //     layer.alert("增加成功", {
+                //         icon: 6
+                //     },
+                //     function() {
+                //         // 获得frame索引
+                //         var index = parent.layer.getFrameIndex(window.name);
+                //         //关闭当前frame
+                //         parent.layer.close(index);
+                //     });
+                //     return false;
+                // });
+
+            });
+            </script>
+        <script>
+        var _hmt = _hmt || []; (function() {
+                var hm = document.createElement("script");
+                hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(hm, s);
+            })();
+        </script>
+
+
+
+
+
+
+        <!-- 修改物流信息 -->
+        <script>
+
+
+            // token
+            var token = localStorage.getItem("token_shangjia_uuid");
+            var url = location.href;
+            var oId = url.substring(url.lastIndexOf("=")+1);
+
+            $(document).ready(function(){
+
+                // 调用回填
+                huiTian();
+
+
+            })
+
+
+            // 回填方法
+            var huiTian = function(){
+                $.ajax({
+                    headers:{
+                        token:token
+                    },
+                    async:false,
+                    url:"http://localhost/orderr/selectByoId",
+                    type:"get",
+                    data:{
+                        oId:oId
+                    },
+                    success:function(respTxt){
+                        var order = respTxt.data;
+
+                        var oStatuses = $("#orderStatus option");
+                        for(var log of oStatuses){
+                            if(log.value == order.ostatus){
+                                log.selected = true;
+                            } else{
+                                log.selected = false;
+                            }
+                        }
+                    }
+                })
+            }
+            
+            // 提交修改
+
+            $("#orderUpdate").click(function() {
+                var oStatus = $("select[name='orderStatus']").val();
+                $.ajax({
+                    headers:{
+                        token:token
+                    },
+                    url:"http://localhost/orderr/updateOrderr",
+                    type:"post",
+                    data:{
+                        oId:oId,
+                        oStatus:oStatus
+                    },
+                    success:function(respTxt){
+                        if(respTxt.status == 1){
+                            alert("修改成功");
+                        }
+                        else{
+                            alert("修改失败");
+                            return;
+                        }
+                    }
+                })
+            })
+        </script>
+    </body>
+
+</html>

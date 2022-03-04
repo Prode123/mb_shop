@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="format-detection" content="telephone=no, email=no"/>
+	<meta charset="UTF-8">
+	<title>用户注册</title>
+	<link rel="stylesheet" href="themes/css/core.css">
+	<link rel="stylesheet" href="themes/css/icon.css">
+	<link rel="stylesheet" href="themes/css/home.css">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link href="iTunesArtwork@2x.png" sizes="114x114" rel="apple-touch-icon-precomposed">
+	<style>
+		.m-cell {
+			background-color: #FFF;
+			/* position: relative; */
+			z-index: 1;
+			margin-bottom: .35rem;
+			height: 3rem;
+			line-height: 3rem;
+		}
+		/* 有些资料显示需要写，有些显示不需要，但是在编辑器webstorm中该属性不被识别 */
+		::-webkit-input-placeholder {
+			/* WebKit browsers */
+			color: #888;
+		}
+
+		:-moz-placeholder {
+			/* Mozilla Firefox 4 to 18 */
+			color: #888;
+		}
+
+		::-moz-placeholder {
+			/* Mozilla Firefox 19+ */
+			color: #888;
+		}
+
+		:-ms-input-placeholder {
+			/* Internet Explorer 10+ */
+			color: #888;
+		}
+        .red-color{
+           margin: -10px;
+          margin-left: 0px;
+        }
+		.sec{
+			padding-top: 35px;
+		}
+	</style>
+
+</head>
+<body style="background:#eee">
+
+	<header class="aui-header-default aui-header-fixed ">
+		<a href="javascript:history.back(-1)" class="aui-header-item">
+			<i id="jt" class="aui-icon aui-icon-back"></i>
+		</a>
+		<!-- <div class="aui-header-center aui-header-center-clear">
+			<div class="aui-header-center-logo">
+				<div class="">设置</div>
+			</div>
+		</div> -->
+		<!-- <a href="#" class="aui-header-item-icon"   style="min-width:0">
+			<i class="aui-icon aui-icon-share-pd"></i>
+		</a> -->
+	</header>
+<section class="sec">
+		<div class="aui-Address-box" >
+           
+			<!-- <div style="height: 115px; text-align: center; line-height: 150px;"> -->
+				<!-- <div style="display: inline-block;"> -->
+					<!-- <img src="iTunesArtwork@2x.png" alt=""> -->
+					<!-- <img id="tx" src="http://localhost/img/comeIn.png" alt="" width="100px" height="100px"> -->
+					<!-- <img src="\\\\169.254.40.220\\img" alt=""> -->
+				<!-- </div> -->
+			<!-- </div> -->
+			<p  >
+				<!-- <hr> -->
+				<input class="aui-Address-box-input" type="text" id="tel"  placeholder="请输入手机号">
+			</p>
+               <p  >
+				<!-- <hr> -->
+				<input class="aui-Address-box-input" type="text" id="uusername"  placeholder="请输入用户名">
+			</p>
+			<p>
+				<input class="aui-Address-box-input" type="password" id="passwd" placeholder="请输入密码">
+				<!-- <hr> -->
+			</p>
+               <p>
+				<input class="aui-Address-box-input" type="password" id="passwd1"  placeholder="请再次输入密码">
+				<!-- <hr> -->
+			</p>
+		
+		</div>
+
+        <div class="aui-out">
+			<a href="login.html" class="red-color" style="color:#fff">已有账号？点我登录</a>
+		</div>
+		<div class="aui-out">
+			<a class="red-color" style="color:#fff" id="register_user">点击注册</a>
+		</div>
+	</section>
+	<script src="./themes/js/jquery-3.6.0.js"></script>
+
+     <script>
+
+         
+		var token=localStorage.getItem("token_user_uuid");
+       
+        //   失去手机号焦点事件 向数据库查询手机号是否已注册
+		$(document).ready(function(){
+          $('#tel').blur(function(){
+            var tel = $("#tel").val();
+			$.ajax({
+                url:"http://localhost/user/selectTelExist",
+				headers:{token:token},
+                data:{uTel:tel},
+                success:function(response){
+                   if(response.status==0){
+                        alert("手机号已被注册");
+				   return;
+				   }
+				   else return;
+                }
+
+		  });
+
+		});
+		});
+     
+          // <!-- 判断密码是否相等 -->
+             $('#passwd1').blur(function(){
+               var upasswd = $("#passwd").val();
+               var upasswd1 = $("#passwd1").val();
+               if(upasswd!=upasswd1)
+               alert("两次密码输入不一致");
+          });
+     
+
+               //  再次验证手机号
+           
+     //            $("#register_user").click(function(){
+     //            $('#tel').blur(function(){
+     //            var tel = $("#tel").val(); 
+     //            $.ajax({
+     //            url:"http://localhost/user/selectTelExist",
+     //            data:{uTel:tel},
+     //            success:function(response){
+     //               if(response.status==0){
+     //                    alert("手机号已被注册");
+	// 			   return;
+	// 			   }
+	// 			      else  
+     //            }
+     //             })
+     //       
+     // });
+
+         
+               //    注册事件 向后端发送注册请求
+             $("#register_user").click(function(){
+                          var tel = $("#tel").val();
+                          var username = $("#uusername").val();
+                          var passwd = $("#passwd").val();
+                          $.ajax({
+                               
+                               url:"http://localhost/user/register",
+							   headers:{token:token},
+                               data:{uTel:tel,uUsername:username, uPasswd:passwd},
+                              success:function(response){
+                                   if(response.status==1){
+                                        alert("注册成功，点我去登录");
+                                        location.href = "login.html";
+                                   }
+                                   else if(response.status==2)
+                                   {
+                                        alert("注册失败");
+                                   }
+                                   else   alert("手机号已被注册");
+
+                                        
+                }
+            })   
+           })   
+     
+     </script>
+
+</body>
+</html>

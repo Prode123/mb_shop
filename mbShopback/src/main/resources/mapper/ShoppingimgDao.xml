@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.ShoppingimgDao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Shoppingimg" id="ShoppingimgMap">
+        <result property="picId" column="pic_id" jdbcType="INTEGER"/>
+        <result property="picName" column="pic_name" jdbcType="VARCHAR"/>
+        <result property="picSrc" column="pic_src" jdbcType="VARCHAR"/>
+        <result property="gId" column="g_id" jdbcType="INTEGER"/>
+        <result property="pic1" column="pic_1" jdbcType="VARCHAR"/>
+        <result property="pic2" column="pic_2" jdbcType="VARCHAR"/>
+        <result property="pic3" column="pic_3" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        pic_id, pic_name, pic_src, g_id, pic_1, pic_2, pic_3    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="ShoppingimgMap">
+        select
+          <include refid="Base_Column_List" />
+        from shoppingimg
+        where pic_id = #{picId}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="ShoppingimgMap">
+        select
+        <include refid="Base_Column_List" />
+        from shoppingimg
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="ShoppingimgMap">
+        select
+        <include refid="Base_Column_List" />
+        from shoppingimg
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="ShoppingimgMap">
+        select
+        <include refid="Base_Column_List" />
+        from shoppingimg
+        <where>
+                    <if test="picId != null">
+                and pic_id = #{picId}
+            </if>
+                    <if test="picName != null and picName != ''">
+                and pic_name = #{picName}
+            </if>
+                    <if test="picSrc != null and picSrc != ''">
+                and pic_src = #{picSrc}
+            </if>
+                    <if test="gId != null">
+                and g_id = #{gId}
+            </if>
+                    <if test="pic1 != null and pic1 != ''">
+                and pic_1 = #{pic1}
+            </if>
+                    <if test="pic2 != null and pic2 != ''">
+                and pic_2 = #{pic2}
+            </if>
+                    <if test="pic3 != null and pic3 != ''">
+                and pic_3 = #{pic3}
+            </if>
+                </where>
+    </select>
+
+    <select id="findShoppingimgByGid" parameterType="int" resultMap="ShoppingimgMap">
+        select * from shoppingimg where g_id=#{gid}
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="picId" useGeneratedKeys="true">
+        insert into shoppingimg(pic_id, pic_name, pic_src, g_id, pic_1, pic_2, pic_3)
+        values ( #{picId}, #{picName}, #{picSrc}, #{gId}, #{pic1}, #{pic2}, #{pic3})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into shoppingimg(pic_id, pic_name, pic_src, g_id, pic_1, pic_2, pic_3)
+        values 
+        <foreach collection="shoppingimgs" item="item" index="index" separator=",">
+        (
+                        #{item.picId},             #{item.picName},             #{item.picSrc},             #{item.gId},             #{item.pic1},             #{item.pic2},             #{item.pic3}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.shoppingimg
+        <set>
+                    <if test="picName != null and picName != ''">
+                pic_name = #{picName},
+            </if>
+                    <if test="picSrc != null and picSrc != ''">
+                pic_src = #{picSrc},
+            </if>
+                    <if test="gId != null">
+                g_id = #{gId},
+            </if>
+                    <if test="pic1 != null and pic1 != ''">
+                pic_1 = #{pic1},
+            </if>
+                    <if test="pic2 != null and pic2 != ''">
+                pic_2 = #{pic2},
+            </if>
+                    <if test="pic3 != null and pic3 != ''">
+                pic_3 = #{pic3},
+            </if>
+                </set>
+        where pic_id = #{picId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from shoppingimg where pic_id = #{picId}
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from shoppingimg
+    </select>
+</mapper>

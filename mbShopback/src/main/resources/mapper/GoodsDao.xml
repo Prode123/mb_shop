@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.GoodsDao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Goods" id="GoodsMap">
+        <result property="gId" column="g_id" jdbcType="INTEGER"/>
+        <result property="gName" column="g_name" jdbcType="VARCHAR"/>
+        <result property="c2Id" column="c2_id" jdbcType="INTEGER"/>
+        <result property="gPrice" column="g_price" jdbcType="DOUBLE"/>
+        <result property="oId" column="o_id" jdbcType="INTEGER"/>
+        <result property="gNum" column="g_num" jdbcType="INTEGER"/>
+        <result property="gStatus" column="g_status" jdbcType="INTEGER"/>
+        <result property="gPic" column="g_pic" jdbcType="VARCHAR"/>
+        <result property="g1" column="g_1" jdbcType="VARCHAR"/>
+        <result property="g2" column="g_2" jdbcType="VARCHAR"/>
+        <result property="g3" column="g_3" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        g_id, g_name, c2_id, g_price, o_id, g_num, g_status, g_pic, g_1, g_2, g_3    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="GoodsMap">
+        select
+          <include refid="Base_Column_List" />
+        from goods
+        where g_id = #{gId}
+    </select>
+
+<!-- gm 通过c2Id查询符合的所有数据-->
+    <select id="selectByC2id" resultMap="GoodsMap">
+        select
+        <include refid="Base_Column_List" />
+        from goods
+        where c2_id = #{c2Id}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="GoodsMap">
+        select
+        <include refid="Base_Column_List" />
+        from goods
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="GoodsMap">
+        select
+        <include refid="Base_Column_List" />
+        from goods
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="GoodsMap">
+        select
+        <include refid="Base_Column_List" />
+        from goods
+        <where>
+                    <if test="gId != null">
+                and g_id = #{gId}
+            </if>
+                    <if test="gName != null and gName != ''">
+                and g_name = #{gName}
+            </if>
+                    <if test="c2Id != null">
+                and c2_id = #{c2Id}
+            </if>
+                    <if test="gPrice != null">
+                and g_price = #{gPrice}
+            </if>
+                    <if test="oId != null">
+                and o_id = #{oId}
+            </if>
+                    <if test="gNum != null">
+                and g_num = #{gNum}
+            </if>
+                    <if test="gStatus != null">
+                and g_status = #{gStatus}
+            </if>
+                    <if test="gPic != null and gPic != ''">
+                and g_pic = #{gPic}
+            </if>
+                    <if test="g1 != null and g1 != ''">
+                and g_1 = #{g1}
+            </if>
+                    <if test="g2 != null and g2 != ''">
+                and g_2 = #{g2}
+            </if>
+                    <if test="g3 != null and g3 != ''">
+                and g_3 = #{g3}
+            </if>
+                </where>
+    </select>
+
+    <!-- 模糊查询 -->
+    <select id="mHFindGoodsByInput1" parameterType="String" resultMap="GoodsMap">
+        select * from goods where g_name like concat('%',#{input1},'%')
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="gId" useGeneratedKeys="true">
+        insert into goods(g_id, g_name, c2_id, g_price, o_id, g_num, g_status, g_pic, g_1, g_2, g_3)
+        values ( #{gId}, #{gName}, #{c2Id}, #{gPrice}, #{oId}, #{gNum}, #{gStatus}, #{gPic}, #{g1}, #{g2}, #{g3})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into goods(g_id, g_name, c2_id, g_price, o_id, g_num, g_status, g_pic, g_1, g_2, g_3)
+        values 
+        <foreach collection="goodss" item="item" index="index" separator=",">
+        (
+                        #{item.gId},             #{item.gName},             #{item.c2Id},             #{item.gPrice},             #{item.oId},             #{item.gNum},             #{item.gStatus},             #{item.gPic},             #{item.g1},             #{item.g2},             #{item.g3}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.goods
+        <set>
+                    <if test="gName != null and gName != ''">
+                g_name = #{gName},
+            </if>
+                    <if test="c2Id != null">
+                c2_id = #{c2Id},
+            </if>
+                    <if test="gPrice != null">
+                g_price = #{gPrice},
+            </if>
+                    <if test="oId != null">
+                o_id = #{oId},
+            </if>
+                    <if test="gNum != null">
+                g_num = #{gNum},
+            </if>
+                    <if test="gStatus != null">
+                g_status = #{gStatus},
+            </if>
+                    <if test="gPic != null and gPic != ''">
+                g_pic = #{gPic},
+            </if>
+                    <if test="g1 != null and g1 != ''">
+                g_1 = #{g1},
+            </if>
+                    <if test="g2 != null and g2 != ''">
+                g_2 = #{g2},
+            </if>
+                    <if test="g3 != null and g3 != ''">
+                g_3 = #{g3},
+            </if>
+                </set>
+        where g_id = #{gId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from goods where g_id = #{gId}
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from goods
+    </select>
+</mapper>

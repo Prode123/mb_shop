@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    
+    <head>
+        <meta charset="UTF-8">
+        <!-- <title>欢迎页面-X-admin2.2</title> -->
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="./css/font.css">
+        <link rel="stylesheet" href="./css/xadmin.css">
+        <script src="https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190"></script>
+        <link rel="Bookmark" href="favicon.ico" >
+<link rel="Shortcut Icon" href="favicon.ico" />
+        <script type="text/javascript" src="./js/jquery.min.js"></script>
+        <script src="./lib/layui/layui.js" charset="utf-8"></script>
+        <script src="./js/xadmin.js"></script>
+
+        
+        <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+        <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+        <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+        <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+        <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+        <!--[if lt IE 9]>
+          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <title>产品分类</title>
+        <link rel="stylesheet" href="lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+        <link id="layuicss-layer" rel="stylesheet" href="http://localhost/X-admin/lib/layui/css/modules/layer/default/layer.css?v=3.1.1" media="all">
+    </head>
+<body>
+
+
+    
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+        <button class="layui-btn layui-btn-danger" onclick="xadmin.open('删除一级标签','./product-deleteone.html',500,280)"><i class="layui-icon"></i>删除一级标签</button>
+        <button class="layui-btn layui-btn-danger" onclick="xadmin.open('删除二级标签','./product-deletetwo.html',500,340)"><i class="layui-icon"></i>删除二级标签</button>
+       
+        
+        <!-- <button id="addone" class="layui-btn"><i class="layui-icon"></i>添加一级标签</button> -->
+        <button class="layui-btn" onclick="xadmin.open('添加一级标签','./product-addone.html',500,200)"><i class="layui-icon"></i>添加一级标签</button>
+        <button class="layui-btn" onclick="xadmin.open('添加二级标签','./product-addtwo.html',500,330)"><i class="layui-icon"></i>添加二级标签</button>
+     
+        
+        <!-- <button class="layui-btn" onclick="xadmin.open('添加用户','./admin-add.html',600,400)"><i class="layui-icon"></i>添加二级标签</button> -->
+                    
+                    </div>
+
+            <table class="table">
+                <tr>
+                    <td width="200" class="va-t" id="one"><ul id="treeDemo" class="ztree"></ul></td>
+                    <!--  <td class="va-t"><iframe ID="testIframe" Name="testIframe" FRAMEBORDER=0 SCROLLING=AUTO width=100%  height=390px SRC="hello.html"></iframe></td> -->
+                </tr>
+            </table>
+    </div>
+    
+</div>
+</div>
+</div>
+<div>
+    <!-- <section class="Hui-article-box">
+        <div class="Hui-article">
+                    <article class="cl pd-20">
+                        <table class="table">
+                            <tr>
+                                <td width="200" class="va-t"><ul id="treeDemo" class="ztree"></ul></td>
+                                <td class="va-t"><iframe ID="testIframe" Name="testIframe" FRAMEBORDER=0 SCROLLING=AUTO width=100%  height=390px SRC="product-category-add.html"></iframe></td>
+                            </tr>
+                        </table> 
+                    </article>
+                </div>
+            </section> -->
+            <!--_footer 作为公共模版分离出去-->
+    <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="static/h-ui/js/H-ui.js"></script>
+    <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.page.js"></script>
+    <!--/_footer /作为公共模版分离出去-->
+    
+    <!--请在下方写此页面业务相关的脚本-->
+    <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+    <script type="text/javascript" src="lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+    <script type="text/javascript" src="lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+    <script type="text/javascript">
+
+    //获取token值
+    var token=localStorage.getItem("token_shangjia_uuid");
+
+    //创建数组
+    var c1 =new Array();
+    var c2 = new Array();
+        $.ajax({
+            async:false,
+            headers:{
+                token:token
+            },
+            url:"http://localhost/classify1/findAll",
+            type:"get",
+            success:function(respText){
+                //获取地址
+               var ul = $("#one");
+                //得到数据
+               var list = respText;
+               var i = 0;
+                for(var acc of list){
+                    // var ul1 = $("<ul>"+acc.c1Name+"</ul>");
+                    // ul.append(ul1);
+        
+                    var c1_name=acc.c1Name;
+                    var c1_id=acc.c1Id;
+                    var obj={"id":c1_id, "pId":0, "name":c1_name, "open":false};
+                    //alert(obj["id"]);
+                    //数组添加数据
+                    c1.push(obj);
+                    var aa = c1_id*10+1;
+                   // alert(aa);
+                    i++;
+                    $.ajax({
+            async:false,
+            headers:{
+                token:token
+            },
+            url:"http://localhost/classify2/findIdAll",
+            type:"get",
+            data:{c1_id:c1_id},
+            success:function(resp){
+                //获取地址
+                //得到数据
+                //alert(1);
+               var list1 = resp;
+               var a1 = 0;
+                for(var acc1 of list1){
+                    // var ul1 = $("<ul>"+acc.c1Name+"</ul>");
+                    // ul.append(ul1);
+                    // { id:11, pId:1, name:"二级分类"},
+                    // var aa=c1Id*10+1;
+                    var c2_name=acc1.c2Name;
+                    //var c2_id=acc1.c2Id;
+                    c2.push({id:aa, pId:c1_id, name:c2_name});
+                    //hb[a1]={id:aa, pId:c2_id, name:c2_name};
+                // hb[a]=acc1.c2Name;
+                // alert(acc1.c2Name);
+                a1++;
+                aa++;
+                }
+            }
+        });
+              }
+            }
+        });
+//         //添加一级标签
+// $("#addone").click(function(treeId, treeNode) {
+//                 var zTree = $.fn.zTree.getZTreeObj("tree");
+//                     demoIframe.attr("src","product-category-addlabel1.html");
+//             });
+
+
+// for(var aaa of c1) {
+//     var bbb = aaa;
+//     alert(bbb["id"])
+//     alert(bbb["name"])
+//     alert(bbb["open"])
+// }
+    var setting = {
+        view: {
+            dblClickExpand: false,
+            showLine: false,
+            selectedMulti: false
+        },
+        data: {
+            simpleData: {
+                enable:true,
+                idKey: "id",
+                pIdKey: "pId",
+                rootPId: ""
+            }
+        }
+        // },
+        // callback: {
+        //     beforeClick: function(treeId, treeNode) {
+        //         var zTree = $.fn.zTree.getZTreeObj("tree");
+                
+        //         if (treeNode.isParent) {
+        //             zTree.expandNode(treeNode);
+        //             return false;
+        //         } else {
+        //            // $("body").on("click","li",function(data){     alert(data); });
+        //            // alert($("li").text);
+        //             demoIframe.attr("src","paoduct-list.html?");
+        //             return true;
+        //         }
+        //     }
+        // }
+    };
+    
+
+//数组合并
+    var zNodes = c1.concat(c2);
+    // [
+    //     { id:1, pId:0, name:c1[0], open:false},
+        
+    //     { id:11, pId:1, name:"二级分类"},
+
+    //     { id:111, pId:11, name:"三级分类"},
+    //     { id:112, pId:11, name:"三级分类"},
+    //     { id:113, pId:11, name:"三级分类"},
+    //     { id:114, pId:11, name:"三级分类"},
+    //     { id:115, pId:11, name:"三级分类"},
+
+    //     { id:12, pId:1, name:"二级分类 1-2"},
+    //     { id:121, pId:12, name:"三级分类 1-2-1"},
+    //     { id:122, pId:12, name:"三级分类 1-2-2"},
+
+
+    //     { id:2, pId:0, name:hu[1], open:false},
+
+    //     { id:21, pId:2, name:"二级分类"},
+    // ];
+    
+    var code;
+    
+    function showCode(str) {
+        if (!code) code = $("#code");
+        code.empty();
+        code.append("<li>"+str+"</li>");
+    }
+    
+    $(document).ready(function(){
+        var t = $("#treeDemo");
+        t = $.fn.zTree.init(t, setting, zNodes);
+        demoIframe = $("#testIframe");
+        demoIframe.bind("load", loadReady);
+        var zTree = $.fn.zTree.getZTreeObj("tree");
+        zTree.selectNode(zTree.getNodeByParam("id",'11'));
+    });
+    </script>
+
+<script>
+    layui.use(['laydate','form'], function(){
+      var laydate = layui.laydate;
+      var form = layui.form;
+      
+      //执行一个laydate实例
+      laydate.render({
+        elem: '#start' //指定元素
+      });
+
+      //执行一个laydate实例
+      laydate.render({
+        elem: '#end' //指定元素
+      });
+    });
+
+     /*用户-停用*/
+    function member_stop(obj,id){
+        layer.confirm('确认要停用吗？',function(index){
+
+            if($(obj).attr('title')=='启用'){
+
+              //发异步把用户状态进行更改
+              $(obj).attr('title','停用')
+              $(obj).find('i').html('&#xe62f;');
+
+              $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+              layer.msg('已停用!',{icon: 5,time:1000});
+
+            }else{
+              $(obj).attr('title','启用')
+              $(obj).find('i').html('&#xe601;');
+
+              $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+              layer.msg('已启用!',{icon: 5,time:1000});
+            }
+            
+        });
+    }
+
+    /*用户-删除*/
+    function member_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            //发异步删除数据
+            $(obj).parents("tr").remove();
+            layer.msg('已删除!',{icon:1,time:1000});
+        });
+    }
+
+
+
+    function delAll (argument) {
+
+      var data = tableCheck.getData();
+
+      layer.confirm('确认要删除吗？'+data,function(index){
+          //捉到所有被选中的，发异步进行删除
+          layer.msg('删除成功', {icon: 1});
+          $(".layui-form-checked").not('.header').parents('tr').remove();
+      });
+    }
+  </script>
+  <script>var _hmt = _hmt || []; (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();</script>
+
+</body>
+</html>

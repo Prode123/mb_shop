@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="format-detection" content="telephone=no, email=no"/>
+	<meta charset="UTF-8">
+	<title>查询</title>
+	<link rel="stylesheet" href="themes/css/core.css">
+	<link rel="stylesheet" href="themes/css/icon.css">
+	<link rel="stylesheet" href="themes/css/home.css">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link href="iTunesArtwork@2x.png" sizes="114x114" rel="apple-touch-icon-precomposed">
+	<script src="./themes/js/jquery.min.js"></script>
+
+</head>
+<body>
+
+	<header class="aui-header-default aui-header-fixed ">
+		<a href="javascript:history.back(-1)" class="aui-header-item">
+			<i class="aui-icon aui-icon-back"></i>
+		</a>
+		<div class="aui-header-center aui-header-center-clear">
+			<div class="aui-header-center-logo">
+				<div class="">查询结果</div>
+			</div>
+		</div>
+		<a href="#" class="aui-header-item-icon" style="min-width:0">
+			<i style="opacity: 0;" class="aui-icon aui-icon-search"></i>
+		</a>
+	</header>
+
+	<div class="aui-content-box">
+		<div class="aui-banner-content " data-aui-slider>
+			<div class="aui-banner-wrapper">
+				<div class="aui-banner-wrapper-item">
+					<a href="#">
+						<img src="themes/img/banner/news-banner2.jpg" style="height: 44px;">
+					</a>
+				</div>
+			</div>
+			<div class="aui-banner-pagination"></div>
+		</div>
+
+		<section class="aui-list-product">
+			<div class="aui-list-product-box" id="box1">
+				<!-- <a href="ui-product.html" class="aui-list-product-item">
+					<div class="aui-list-product-item-img">
+						<img src="themes/img/pd/sf-15.jpg" alt="">
+					</div>
+					<div class="aui-list-product-item-text">
+						<h3>KOBE LETTUCE 秋冬新款 女士日系甜美纯色半高领宽松套头毛衣针织衫</h3>
+						<div class="aui-list-product-mes-box">
+							<div>
+							<span class="aui-list-product-item-price">
+								<em>¥</em>
+								399.99
+							</span>
+							<span class="aui-list-product-item-del-price">
+								¥495.65
+							</span>
+							</div>
+							<div class="aui-comment">986评论</div>
+						</div>
+					</div>
+				</a> -->
+			</div>
+		</section>
+	</div>
+
+
+	<script type="text/javascript" src="themes/js/jquery.min.js"></script>
+	<script type="text/javascript" src="themes/js/aui.js"></script>
+	<!-- <script src="js/jquery-3.6.0.js"></script> -->
+	<script src="js/jquery.form.js"></script>
+
+    <script>
+		
+		var token=localStorage.getItem("token_user_uuid");
+		// 获取登录的用户的id
+		var uid = localStorage.getItem("token_user_uid");
+        var searchUrl =window.location.href;
+        var searchData =searchUrl.split("=");
+        var input1 =decodeURI(searchData[1]);//获取需要的参数
+		// var token=localStorage.getItem("token_user_uuid");
+
+        $.ajax({
+        headers:{token:token},
+        async:false,
+        url:"http://localhost/goods/mHFindGoodsByInput1",
+        data:{input1:input1},
+        type:"get",
+            success:function(resp){
+                var good1=resp;
+            
+                localStorage.setItem("token_user_uuid",resp.message);
+                for(var good of good1){
+                    var a1=$("<a href='ui-product.html?gid="+good.gid+"' class='aui-list-product-item'></a>");
+                    var div1=$("<div class='aui-list-product-item-img'></div>");
+                    var imgPath = good.gpic.substring(good.gpic.lastIndexOf("img")+4);
+                    var img1=$("<img src='http://localhost/img/"+ imgPath +"'> alt=''");
+                    var div3=$("<div class='aui-list-product-item-text'></div>");
+                    var h31=$("<h3>"+good.gname+"</h3>");
+                    var div4=$("<div class='aui-list-product-mes-box'></div>");
+                    var div5=$("<div></div>")
+                    var span1=$("<span class='aui-list-product-item-price'></span>")
+                    var em1=$("<em>¥</em>")
+                    var rmb1=$("<em>"+good.gprice+"</em>")
+                    var span3=$("<span class='aui-list-product-item-del-price'></span>")
+                    var div7=$("<div class='aui-comment'>986评论</div>")
+            
+                    span1.append(em1);
+                    span1.append(rmb1);
+                    div5.append(span1);
+                    div5.append(span3);
+                    div4.append(div5);
+                    div4.append(div7);
+                    div3.append(h31);
+                    div3.append(div4);
+                    div1.append(img1);
+                    a1.append(div1);
+                    a1.append(div3);
+                    $("#box1").append(a1);
+                }
+            }
+        });
+	</script>
+
+
+
+
+
+
+
+	<script type="text/javascript" >
+        /**
+         * Javascript API调用Tab
+         */
+        !function ($) {
+            var $tab = $('#J_Tab');
+
+            $tab.tab({
+                nav: '.tab-nav-item',
+                panel: '.tab-panel-item',
+                activeClass: 'tab-active'
+            });
+
+			/*
+			 $tab.find('.tab-nav-item').on('open.ydui.tab', function (e) {
+			 console.log('索引：%s - [%s]正在打开', e.index, $(this).text());
+			 });
+			 */
+
+            $tab.find('.tab-nav-item').on('opened.ydui.tab', function (e) {
+                console.log('索引：%s - [%s]已经打开了', e.index, $(this).text());
+            });
+        }(jQuery);
+	</script>
+
+</body>
+</html>

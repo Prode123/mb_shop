@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="./css/font.css">
+        <link rel="stylesheet" href="./css/xadmin.css">
+        <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="./js/xadmin.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+            <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+            <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <style>
+            .layui-form-select dl { max-height:160px; }
+        </style>
+
+        <style>
+            .a-upload{
+            padding: 4px 10px;
+            height: 20px;
+            line-height: 20px;
+            position: relative;
+            cursor: pointer;
+            color: #888;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            display: inline-block;
+            *display: inline;
+            *zoom: 1
+            }
+    
+            .a-upload  input {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            filter: alpha(opacity=0);
+            cursor: pointer
+            }
+
+            .a-upload:hover {
+            color: #444;
+            background: #eee;
+            border-color: #ccc;
+            text-decoration: none
+            }
+        </style>
+    </head>
+    <body>
+        <div class="layui-fluid" style="position: relative; left: 240px; top: 50px;">
+            <div class="layui-row">
+                <form class="layui-form">
+                  <form enctype="multipart/form-data" method="post" id="form">
+                  <div class="layui-form-item">
+                      <label for="" class="layui-form-label">
+                          <span class="x-red">*</span>商品名字
+                      </label>
+                      <div class="layui-input-inline">
+                          <input type="text" id="gName" name="gName" required=""
+                          autocomplete="off" class="layui-input">
+                      </div>
+                      <div class="layui-form-mid layui-word-aux">
+                      </div>
+                  </div>
+
+                  <!-- 添加商品一级类别 -->
+                  <div class="layui-form-item">
+                    <label for="c1Id" class="layui-form-label">
+                        <span class="x-red">*</span>商品一级类别
+                    </label>
+                    <div class="layui-input-inline">
+                       <!-- required  是必选的意思 -->
+                    <!-- <select name="city" lay-filter="c1Id"  id="c1Id" lay-verify="required"  autocomplete="off" class="layui-input"> -->
+                    <select name="city" lay-filter="c1Id"  id="c1Id" lay-verify="" autocomplete="off" class="layui-input">
+                        <option value="" id="ccc">请选择商品一级类别</option>
+                    </select>
+                    </div>
+                </div>
+
+
+
+
+<!-- 商品二级标签 -->
+                  <div class="layui-form-item">
+                      <label for="" class="layui-form-label">
+                          <span class="x-red">*</span>商品二级类别
+                      </label>
+                      <div class="layui-input-inline">
+                          <!-- <select id="c2Id"> -->
+
+                        <select name="city"  lay-verify=""  id="c2Id" lay-filter="c2Id"   autocomplete="off" class="layui-input">
+                         
+                          </select>
+                      </div>
+                      <div class="layui-form-mid layui-word-aux">
+                      </div>
+                  </div>
+                  <div class="layui-form-item">
+                      <label for="" class="layui-form-label">
+                          <span class="x-red">*</span>单价
+                      </label>
+                      <div class="layui-input-inline">
+                          <input type="text" id="gPrice" name="gPrice" required=""
+                          autocomplete="off" class="layui-input">
+                      </div>
+                      <div class="layui-form-mid layui-word-aux">
+                      </div>
+                  </div>
+                  <div class="layui-form-item">
+                    <label for="" class="layui-form-label">
+                        <span class="x-red">*</span>订单编号
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="oId" name="oId" required=""
+                        autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">
+                        <span class="x-red">*</span>商品库存
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="gNum" name="gNum" required=""
+                        autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                    </div>
+                </div>
+                  <div class="layui-form-item">
+                      <label class="layui-form-label"><span class="x-red">*</span>上架状态</label>
+                      <div class="layui-input-block">
+                          <input type="radio" name="gStatus" value="1" lay-skin="primary" checked><span style="position: relative; right: 20px; top: 4px;">已上架</span>
+                          <input type="radio" name="gStatus"value="0" lay-skin="primary"><span style="position: relative; right: 20px; top: 4px;">未上架</span>
+                      </div>
+                  </div>
+                  <div class="layui-form-item">
+                    <label for="" class="layui-form-label">
+                        <span class="x-red">*</span>主图
+                    </label>
+                    <!-- <div> -->
+                        <!-- <a href="javascript:;" class="a-upload">
+                            <input type="file" name="" id="">+
+                        </a> -->
+                    <!-- </div> -->
+                    <div class="layui-input-inline">
+                        <input type="file" id="photo" name="photo" required=""
+                        autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                    </div>
+                </div>
+                    <div class="layui-form-mid layui-word-aux">
+                    </div>
+                </div>
+                  <div>
+                      <label for="" class="layui-form-label">
+                      </label>
+                      <button type="button" class="layui-btn" id="button">
+                          增加
+                      </button>
+                  </div>
+                </form>
+              </form>
+
+              <form enctype="multipart/form-data" method="post" id="form1" style="display: none;">
+
+            </form>
+            </div>
+        </div>
+        <script src="js/jquery-3.6.0.js"></script>
+        <script src="js/jquery.form.js"></script>
+        <script>
+            
+            var token = localStorage.getItem("token_shangjia_uuid");
+            // $.ajax({
+            //     async:false,
+            //     url:"http://localhost/classify2/queryAllClassify2",
+            //     headers:{
+            //         token:token
+            //     },
+            //     type:"get",
+            //     success:function(resp){
+            //         for(var classify2 of resp){
+            //             var option=$("<option value="+classify2.c2Id+">"+classify2.c2Name+"</option>");
+            //             $("#c2Id").append(option);
+            //         }
+            //     }
+            // });
+
+            // 标签注释
+            layui.use(['form', 'jquery'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        
+		//第一级下拉列表框数据的获取
+        $.ajax({
+            headers:{
+                    token:token
+                },
+            url: 'http://localhost/classify1/findAll',
+            // dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                $.each(data, function (index, item) {
+                	// 对应数据的属性
+                    // $('#c1Id').append("<option value='"+tar.c1Id+"'>"+tar.c1Name+"</option>");// 下拉菜单里添加元素
+                    $('#c1Id').append(new Option(item.c1Name, item.c1Id));// 下拉菜单里添加元素
+                });
+                layui.form.render();//重新渲染 固定写法
+            }
+        });
+        form.on('select(c1Id)', function (data) {
+            //获取第一个下拉列表框选中的内容
+            var params = {
+                school: data.value
+            };
+            //alert(params);
+            var c1Id=$("#c1Id").find("option:selected").val();
+            //alert(c1Id);
+            //检查项目添加到下拉框中
+            $.ajax({
+                //url: '第二个下拉列表框所对应的url',
+                // dataType: 'json',
+                // data: JSON.stringify(params), //传输对应的数据--JSON序列化
+                // contentType: "application/json",
+                //type: 'get',
+                headers:{
+                    token:token
+                },
+                url: 'http://localhost/classify2/findIdAll',
+    //         // dataType: 'json',
+                type: 'get',
+                data:{
+                    c1_id:c1Id
+                    },
+                success: function (data) {
+                    $("#c2Id").empty();//清空下拉框的值
+                    $.each(data, function (index, item) {
+                        $('#c2Id').append(new Option(item.c2Name, item.c2Id));// 下拉菜单里添加元素
+                    });
+                    layui.form.render();//重新渲染 固定写法
+                }
+            });
+        });
+        return false;
+    });
+
+
+
+            $("#button").click(function(){
+                // var gName=$("#gName").val();
+                // var c2Id=$("select[id='c2Id']").val();
+                // var gPrice=$("#gPrice").val();
+                // var oId=$("#oId").val();
+                // var gNum=$("#gNum").val();
+                // var gStatus=$("input[name='gStatus']:checked").val();
+                // $.ajax({
+                //     async:false,
+                //     url:"http://localhost/goods/register",
+                //     type:"post",
+                //     data:{gName:gName,c2Id:c2Id,gPrice:gPrice,oId:oId,gNum:gNum,gStatus:gStatus},
+                //     success:function(resp){
+                //         alert(resp);
+                //         location.href="http://localhost/good-list.html";
+                //     }
+                // });
+                // $("#form").ajaxSubmit({
+                //     async:false,
+                //     url:"http://localhost/goods/register",
+                //     type:"post",
+                //     success:function(resp){
+                //     alert(resp);
+                //  }
+                // })
+                var c2Id=$("select[id='c2Id']").val();
+                var gStatus=$("input[name='gStatus']:checked").val();
+                $("#form1").append($("#gName").clone());
+                $("#form1").append($("<input type='text' name='c2Id' value="+c2Id+">"));
+                $("#form1").append($("#gPrice").clone());
+                $("#form1").append($("#oId").clone());
+                $("#form1").append($("#gNum").clone());
+                $("#form1").append($("<input type='text' name='gStatus' value="+gStatus+">"));
+                $("#form1").append($("#photo").clone());
+                $("#form1").ajaxSubmit({
+                    url:"http://localhost/goods/register",
+                    headers:{
+                    token:token
+                },
+                    type:"post",
+                    success:function(resp){
+                    if(resp=="register ok"){
+                        layer.msg('添加成功', {icon: 1,time:1000});
+                        setTimeout("xadmin.close();",1200);
+                        setTimeout("location.href='http://localhost/good-list.html';",1400);
+                    }else{
+                        layer.msg('添加失败', {icon: 2,time:600});
+                    }
+                    
+                 }
+                });
+            });
+        </script>
+        <script>layui.use(['form', 'layer'],
+            function() {
+                $ = layui.jquery;
+                var form = layui.form,
+                layer = layui.layer;
+
+            });
+        </script>
+    </body>
+
+</html>

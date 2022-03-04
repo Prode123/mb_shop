@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="format-detection" content="telephone=no, email=no"/>
+	<meta charset="UTF-8">
+	<title>萌宝</title>
+	<link rel="stylesheet" href="themes/css/core.css">
+	<link rel="stylesheet" href="themes/css/icon.css">
+	<link rel="stylesheet" href="themes/css/home.css">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link href="iTunesArtwork@2x.png" sizes="114x114" rel="apple-touch-icon-precomposed">
+	<script src="./themes/js/jquery.min.js"></script>
+</head>
+<body>
+	<header class="aui-header-default aui-header-fixed ">
+		<a href="class.html" class="aui-header-item">
+			<i class="aui-icon aui-icon-back"></i>
+		</a>
+		<div class="aui-header-center aui-header-center-clear">
+			<!-- <div class="aui-header-search-box">
+				<i class="aui-icon aui-icon-small-search"></i>
+				<input id="" type="text"  placeholder="iphone8 手机钢化膜" class="aui-header-search">
+			</div> -->
+		</div>
+		<a href="#" class="aui-header-item-icon">
+			<i class="aui-icon aui-icon-packet"></i>
+			<i class="aui-icon aui-icon-member"></i>
+		</a>
+	</header>
+	<section class="aui-new-search-content">
+	</section>
+	<section class="aui-list-product" id="allClass2Goods">
+		<div class="aui-list-product-float-item">
+		</div>
+	</section>
+
+	<script>
+
+var token=localStorage.getItem("token_user_uuid");
+var url = location.href;
+var c2Id = url.substring(url.lastIndexOf("c2Id")+5);
+		// 获取登录的用户的id
+		var uid = localStorage.getItem("token_user_uid");
+
+	$.ajax({
+		headers:{token:token},
+		async:false,
+		url:"http://localhost/goods/findC2IdGoods",
+		type:"get",
+		data:{
+			c2Id:c2Id
+		},
+		success:function(resp){
+			var good1=resp;
+			for(var good of good1){
+			var a1=$("<a href='ui-product.html?gid="+good.gid+"' class='aui-list-product-item'></a>");
+			var div1=$("<div class='aui-list-product-item-img'></div>");
+			var imgPath = good.gpic.substring(good.gpic.lastIndexOf("img")+4);
+			var img1=$("<img src='http://localhost/img/"+ imgPath +"'> alt=''");
+			var div3=$("<div class='aui-list-product-item-text'></div>");
+			var h31=$("<h3>"+good.gname+"</h3>");
+			var div4=$("<div class='aui-list-product-mes-box'></div>");
+			var div5=$("<div></div>")
+			var span1=$("<span class='aui-list-product-item-price'></span>")
+			var em1=$("<em>¥</em>")
+			var rmb1=$("<em>"+good.gprice+"</em>")
+			var span3=$("<span class='aui-list-product-item-del-price'></span>")
+			var div7=$("<div class='aui-comment'>986评论</div>")
+
+			span1.append(em1);
+			span1.append(rmb1);
+			div5.append(span1);
+			div5.append(span3);
+			div4.append(div5);
+			div4.append(div7);
+			div3.append(h31);
+			div3.append(div4);
+			div1.append(img1);
+			a1.append(div1);
+			a1.append(div3);
+			$("#allClass2Goods").append(a1);
+				
+
+			}
+		}
+		});
+	</script>
+</body>
+</html>

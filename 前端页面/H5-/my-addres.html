@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="format-detection" content="telephone=no, email=no"/>
+	<meta charset="UTF-8">
+	<title>收货地址</title>
+	<link rel="stylesheet" href="themes/css/core.css">
+	<link rel="stylesheet" href="themes/css/icon.css">
+	<link rel="stylesheet" href="themes/css/home.css">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link href="iTunesArtwork@2x.png" sizes="114x114" rel="apple-touch-icon-precomposed">
+
+</head>
+<body style="background:#eee">
+
+	<header class="aui-header-default aui-header-fixed ">
+		<a href="javascript:history.back(-1)" class="aui-header-item">
+			<i class="aui-icon aui-icon-back"></i>
+		</a>
+		<div class="aui-header-center aui-header-center-clear">
+			<div class="aui-header-center-logo">
+				<div class="">收货地址</div>
+			</div>
+		</div>
+		<a href="#" class="aui-header-item-icon"   style="min-width:0">
+			<i class="aui-icon"></i>
+		</a>
+	</header>
+
+	<section class="aui-myOrder-content">
+		<!-- <div class="aui-Address-box">
+			<div class="aui-Address-box-item">
+				<div class="aui-Address-box-item-bd">
+					李嘉桦
+				</div>
+				<div class="aui-Address-box-item-ft">
+					185****8899
+				</div>
+			</div>
+			<div class="aui-Address-box-item">
+				<div class="aui-Address-box-item-bd">
+					北京市海淀区西三环北路22号中航大厦C座209
+				</div>
+			</div>
+			<div class="aui-Address-box-item">
+				<div class="aui-Address-box-item-bd">
+					<input type="radio" name="dizhi" class="check goods-check goodsCheck" checked="checked" style="background-size: 17px 17px;">
+					 <em style="padding-left:24px;">默认地址</em>
+				</div>
+				<div class="aui-Address-box-item-ft">
+					<p onclick="deladdress()">删除</p>
+				</div>
+			</div>
+		</div>
+		<div class="aui-out">
+			<a href="my-edit-address.html">新建收货地址</a>
+		</div> -->
+	</section>
+
+	<script type="text/javascript" src="themes/js/jquery.min.js"></script>
+	<script type="text/javascript" src="themes/js/aui.js"></script>
+
+<!-- 页面加载事件  通过用户id向数据库查询收货地址 -->
+<script>
+	
+	var token=localStorage.getItem("token_user_uuid");
+	 abc();
+    function abc() {
+		var id =localStorage.getItem('token_user_uid');
+		localStorage.setItem('checkvalue','checked');
+		var checkvalue =localStorage.getItem('checkvalue');
+		// alert(checkvalue);
+		// alert(id);
+		$.ajax({
+			  url:"http://localhost/address/selectAllAddressByUid",
+			  data:{uId:id},
+			  headers:{
+				  token:token
+			  },
+			  success:function(response){
+              var addresses =response.data;
+
+			  // 新建收货地址的div
+				var newaddress=$("<div class='aui-out'><a href='my-edit-address.html'>新建收货地址</a></div>");
+              for(var address of addresses){
+                 
+				var inputtt = $("<input  style='display: none' class='aid' name='aid' id='aid' value='" + address.aid + "'>");
+				//   一个大的section 好像不需要
+				// var addSection = $("<section class='aui-myOrder-content'></section>");
+				// 一个大的div 
+				var addDiv=$("<div class='aui-Address-box'></div>");
+				//  大的div下的第二大div
+				// var nAtDiv=$("<div class='aui-Address-box-item'></div>");
+				// first
+				var nAtDiv1=$("<div class='aui-Address-box-item'></div>");
+				// second
+				var nAtDiv2=$("<div class='aui-Address-box-item'></div>");
+				// third
+				var nAtDiv3=$("<div class='aui-Address-box-item'></div>");
+
+				// 姓名的div
+				var nameDiv=$("<div class='aui-Address-box-item-bd'><p id='name'></p></div>");
+				// 手机号的div
+				var telDiv=$("<div class='aui-Address-box-item-ft'><p id='tel'></p></div>");
+				// 地址的div 和姓名和默认地址重复了
+				 var dzDiv=$("<div class='aui-Address-box-item-bd' id='addr'></div>");
+                
+				//  默认地址的div
+				var mrdzDiv=$("<div class='aui-Address-box-item-bd'></div>");
+
+				// 默认地址上面的输入框
+				var input1=$("<input type='radio' name='dizhi' checked='checked' class='check goods-check goodsCheck'style='background-size: 17px 17px;'>");
+ 
+				// 默认地址
+				var mraddress=$(" <em style='padding-left:24px;'>默认地址</em>");
+
+				// 删除地址div
+				var deladdress=$("<div class='aui-Address-box-item-ft' id='item'><p class='deladdress'>删除</p></div>");
+
+				// 向页面动态添加数据
+				$(".aui-myOrder-content").append(addDiv);
+				addDiv.append(nAtDiv1);
+                nAtDiv1.append(nameDiv);
+				nameDiv.append(address.a1);
+				nAtDiv1.append(telDiv);
+				telDiv.append(address.utel);
+ 
+				addDiv.append(nAtDiv2);
+				nAtDiv2.append(dzDiv);
+				dzDiv.append(address.aaddr);
+
+				addDiv.append(nAtDiv3);
+				nAtDiv3.append(mrdzDiv);
+				mrdzDiv.append(input1);
+				mrdzDiv.append(mraddress);
+         
+                nAtDiv3.append(deladdress);
+				nAtDiv3.append(inputtt);
+			  }
+	          $(".aui-myOrder-content").append(newaddress);
+			  }
+		})
+	}
+</script>
+ 
+<script>
+	//删除地址
+
+	var dizhi;
+    $(".aui-Address-box-item-ft ").click(function() {
+        $(".aui-Address-box-item-ft ").removeClass().addClass("aui-Address-box-item-ft");
+        $(this).removeClass().addClass("aui-Address-box-item-ft active");
+        dizhi = $(this).find("input[name='aid']").val();
+        alert(dizhi);
+    });
+
+//     $(".deladdress").click(function(){
+//        var aAddr=$('#addr').val();
+// 	   var uTel=$('#tel').val();
+// 	   var a1=$('#name').val();
+//        alert(a1);
+// 	     $.ajax({
+// 			   url:"http://localhost/address/deleteAddressByThreeParam",
+			 
+// 			   data:{aAddr:aAddr,uTel:uTel,a1:a1},
+// 			   success:function(response){
+// 				   if(response==1){
+// 					  alert("删除成功");
+// 					  location.href = "my-addres.html";
+// 				   }
+// 				   else alert("删除失败");
+// 				   return;
+// 			   }
+//    })
+// })
+</script>
+<script>
+
+   
+
+	
+  </script>
+<script>
+// 	// 页面加载事件 从数据库查询默认地址 自动勾选
+//  $(document).ready(function(){
+     
+// 	$.ajax({
+// 		url:"http://localhost/address/selectDefaultAddress",
+// 		success:function(response){
+//            if(response.status==1){
+              
+// 		   }
+// 		}
+// 	})
+
+//  });
+  </script>
+
+  
+ <script>
+	// 勾选默认地址时 向数据库发出更改请求
+
+ </script>
+ <script>
+	// 取消勾选时 向数据库更改默认状态
+
+</script> 
+
+<!-- <script type="text/javascript" >
+        /**
+         * Javascript API调用Tab
+         */
+        !function ($) {
+            var $tab = $('#J_Tab');
+
+            $tab.tab({
+                nav: '.tab-nav-item',
+                panel: '.tab-panel-item',
+                activeClass: 'tab-active'
+            });
+			/*
+			 $tab.find('.tab-nav-item').on('open.ydui.tab', function (e) {
+			 console.log('索引：%s - [%s]正在打开', e.index, $(this).text());
+			 });
+			 */
+            $tab.find('.tab-nav-item').on('opened.ydui.tab', function (e) {
+                console.log('索引：%s - [%s]已经打开了', e.index, $(this).text());
+            });
+        }(jQuery);
+	</script> -->
+</body>
+</html>

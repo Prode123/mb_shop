@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.AddressDao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Address" id="AddressMap">
+        <result property="aId" column="a_id" jdbcType="INTEGER"/>
+        <result property="aAddr" column="a_addr" jdbcType="VARCHAR"/>
+        <result property="uId" column="u_id" jdbcType="INTEGER"/>
+        <result property="uTel" column="u_tel" jdbcType="VARCHAR"/>
+        <result property="uName" column="u_name" jdbcType="VARCHAR"/>
+        <result property="uDef" column="u_def" jdbcType="INTEGER"/>
+        <result property="a1" column="a_1" jdbcType="VARCHAR"/>
+        <result property="a2" column="a_2" jdbcType="VARCHAR"/>
+        <result property="a3" column="a_3" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        a_id, a_addr, u_id, u_tel, u_name, u_def, a_1, a_2, a_3    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="AddressMap">
+        select
+          <include refid="Base_Column_List" />
+        from address
+        where a_id = #{aId}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="AddressMap">
+        select
+        <include refid="Base_Column_List" />
+        from address
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="AddressMap">
+        select
+        <include refid="Base_Column_List" />
+        from address
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="AddressMap">
+        select
+        <include refid="Base_Column_List" />
+        from address
+        <where>
+                    <if test="aId != null">
+                and a_id = #{aId}
+            </if>
+                    <if test="aAddr != null and aAddr != ''">
+                and a_addr = #{aAddr}
+            </if>
+                    <if test="uId != null">
+                and u_id = #{uId}
+            </if>
+                    <if test="uTel != null and uTel != ''">
+                and u_tel = #{uTel}
+            </if>
+                    <if test="uName != null and uName != ''">
+                and u_name = #{uName}
+            </if>
+                    <if test="uDef != null">
+                and u_def = #{uDef}
+            </if>
+                    <if test="a1 != null and a1 != ''">
+                and a_1 = #{a1}
+            </if>
+                    <if test="a2 != null and a2 != ''">
+                and a_2 = #{a2}
+            </if>
+                    <if test="a3 != null and a3 != ''">
+                and a_3 = #{a3}
+            </if>
+                </where>
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="aId" useGeneratedKeys="true">
+        insert into address(a_id, a_addr, u_id, u_tel, u_name, u_def, a_1, a_2, a_3)
+        values ( #{aId}, #{aAddr}, #{uId}, #{uTel}, #{uName}, #{uDef}, #{a1}, #{a2}, #{a3})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into address(a_id, a_addr, u_id, u_tel, u_name, u_def, a_1, a_2, a_3)
+        values 
+        <foreach collection="addresss" item="item" index="index" separator=",">
+        (
+                        #{item.aId},             #{item.aAddr},             #{item.uId},             #{item.uTel},             #{item.uName},             #{item.uDef},             #{item.a1},             #{item.a2},             #{item.a3}         )
+         </foreach>
+    </insert>
+<!--    通过用户id新增收货地址-->
+    <insert id="addAddress">
+        insert into address (a_addr,u_id,u_tel,a_1) values ( #{aAddr}, #{uId}, #{uTel},#{a1})
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.address
+        <set>
+                    <if test="aAddr != null and aAddr != ''">
+                a_addr = #{aAddr},
+            </if>
+                    <if test="uId != null">
+                u_id = #{uId},
+            </if>
+                    <if test="uTel != null and uTel != ''">
+                u_tel = #{uTel},
+            </if>
+                    <if test="uName != null and uName != ''">
+                u_name = #{uName},
+            </if>
+                    <if test="uDef != null">
+                u_def = #{uDef},
+            </if>
+                    <if test="a1 != null and a1 != ''">
+                a_1 = #{a1},
+            </if>
+                    <if test="a2 != null and a2 != ''">
+                a_2 = #{a2},
+            </if>
+                    <if test="a3 != null and a3 != ''">
+                a_3 = #{a3},
+            </if>
+                </set>
+        where a_id = #{aId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from address where a_id = #{aId}
+    </delete>
+
+<!--    通过三个参数删除收货地址-->
+    <delete id="deleteAddressByThreeParam">
+        delete from address where a_addr=#{aAddr} and u_tel=#{uTel} and a_1=#{a1}
+    </delete>
+
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from address
+    </select>
+
+
+</mapper>

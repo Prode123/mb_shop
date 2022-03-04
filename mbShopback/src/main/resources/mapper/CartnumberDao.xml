@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs.mapper.CartnumberDao">
+    <!-- 结果集 -->
+    <resultMap type="com.hs.entity.Cartnumber" id="CartnumberMap">
+        <result property="numId" column="num_id" jdbcType="INTEGER"/>
+        <result property="numCount" column="num_count" jdbcType="INTEGER"/>
+        <result property="num1" column="num_1" jdbcType="VARCHAR"/>
+        <result property="num2" column="num_2" jdbcType="VARCHAR"/>
+        <result property="num3" column="num_3" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        num_id, num_count, num_1, num_2, num_3    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="CartnumberMap">
+        select
+          <include refid="Base_Column_List" />
+        from cartnumber
+        where num_id = #{numId}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="CartnumberMap">
+        select
+        <include refid="Base_Column_List" />
+        from cartnumber
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="CartnumberMap">
+        select
+        <include refid="Base_Column_List" />
+        from cartnumber
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="CartnumberMap">
+        select
+        <include refid="Base_Column_List" />
+        from cartnumber
+        <where>
+                    <if test="numId != null">
+                and num_id = #{numId}
+            </if>
+                    <if test="numCount != null">
+                and num_count = #{numCount}
+            </if>
+                    <if test="num1 != null and num1 != ''">
+                and num_1 = #{num1}
+            </if>
+                    <if test="num2 != null and num2 != ''">
+                and num_2 = #{num2}
+            </if>
+                    <if test="num3 != null and num3 != ''">
+                and num_3 = #{num3}
+            </if>
+                </where>
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="numId" useGeneratedKeys="true">
+        insert into cartnumber(num_id, num_count, num_1, num_2, num_3)
+        values ( #{numId}, #{numCount}, #{num1}, #{num2}, #{num3})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into cartnumber(num_id, num_count, num_1, num_2, num_3)
+        values 
+        <foreach collection="cartnumbers" item="item" index="index" separator=",">
+        (
+                        #{item.numId},             #{item.numCount},             #{item.num1},             #{item.num2},             #{item.num3}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update mbshop.cartnumber
+        <set>
+                    <if test="numCount != null">
+                num_count = #{numCount},
+            </if>
+                    <if test="num1 != null and num1 != ''">
+                num_1 = #{num1},
+            </if>
+                    <if test="num2 != null and num2 != ''">
+                num_2 = #{num2},
+            </if>
+                    <if test="num3 != null and num3 != ''">
+                num_3 = #{num3},
+            </if>
+                </set>
+        where num_id = #{numId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cartnumber where num_id = #{numId}
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from cartnumber
+    </select>
+</mapper>

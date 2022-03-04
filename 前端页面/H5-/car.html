@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="format-detection" content="telephone=no, email=no"/>
+	<meta charset="UTF-8">
+	<title>购物车</title>
+	<link rel="stylesheet" href="themes/css/core.css">
+	<link rel="stylesheet" href="themes/css/icon.css">
+	<link rel="stylesheet" href="themes/css/home.css">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link href="iTunesArtwork@2x.png" sizes="114x114" rel="apple-touch-icon-precomposed">
+	<style>
+		.goodsPriceP{
+			font-size: 16px;
+			height: 24px;
+			margin-top: 10px;
+			color: rgb(212, 36, 78);
+		}
+		.numDicClass{
+			margin-top: 55px;
+			margin-right: 20px;
+			height: 24px;
+			line-height: 24px;
+			width: 75px;
+			
+		}
+		.rmButtonCla{
+			font-family: 楷体;
+			font-size: 20px;
+			width: 120px;
+			border-radius: 5px;
+			background-color: rgb(218, 27, 27);
+			color: white;
+		}
+	</style>
+</head>
+<body>
+
+	<header class="aui-header-default aui-header-fixed ">
+		<!-- <a href="javascript:history.back(-1)" class="aui-header-item">
+			<i class="aui-icon aui-icon-back"></i>
+		</a> -->
+		<div class="aui-header-center aui-header-center-clear">
+			<div class="aui-header-center-logo">
+				<div class="">购物车</div>
+			</div>
+		</div>
+		<!-- <a href="#" class="aui-header-item-icon"   style="min-width:0">
+			<i class="aui-icon aui-icon-member"></i>
+		</a> -->
+	</header>
+	<section class="aui-car-content">
+		<div class="aui-dri"></div>
+		<div class="aui-car-box">
+			<div class="aui-car-box-list">
+				<ul class="car-box-list-ul"  style="margin-bottom: 46px;">
+
+				</ul>
+			</div>
+		</div>
+	</section>
+	<div class="aui-payment-bar" style="margin-bottom: 46px;">
+		<div class="all-checkbox"><input type="checkbox" class="check goods-check shopCheck" id="AllCheck">全选</div>
+		<div class="shop-total">
+			<strong>合计：￥<i class="total" id="AllTotal">0</i></strong>
+		</div>
+		<button onclick="jiesuanButton()" class="settlement">去结算</button>
+	</div>
+
+
+	<footer class="aui-footer-default aui-footer-fixed">
+		<a href="index.html" class="aui-footer-item">
+			<span class="aui-footer-item-icon aui-icon aui-footer-icon-home"></span>
+			<span class="aui-footer-item-text">首页</span>
+		</a>
+		<a href="class.html" class="aui-footer-item">
+			<span class="aui-footer-item-icon aui-icon aui-footer-icon-class"></span>
+			<span class="aui-footer-item-text">分类</span>
+		</a>
+		<!-- <a href="find.html" class="aui-footer-item">
+			<span class="aui-footer-item-icon aui-icon aui-footer-icon-find"></span>
+			<span class="aui-footer-item-text">发现</span>
+		</a> -->
+		<a href="car.html" class="aui-footer-item aui-footer-active">
+			<span class="aui-footer-item-icon aui-icon aui-footer-icon-car"></span>
+			<span class="aui-footer-item-text">购物车</span>
+		</a>
+		<a href="ui-me.html" class="aui-footer-item">
+			<span class="aui-footer-item-icon aui-icon aui-footer-icon-me"></span>
+			<span class="aui-footer-item-text">我的</span>
+		</a>
+	</footer>
+	<script src="themes/js/jquery.min.js"></script>
+	<!-- <script src="themes/js/aui-car.js"></script> -->
+
+
+	<script> 
+		// 页面刷新判断是否登录
+		// author lt
+			abc();
+			function abc() {
+				if(localStorage.getItem('token_user_status')==1){
+					// alert("11111111111");
+					$("#user").html(localStorage.getItem("token_user_uuid"));
+				}
+			else  {
+				alert("您还未登录，点击确定前去登录");
+				location.href = "login.html";
+			}
+			
+			}
+		   
+		</script>
+
+
+	<script>
+		// 从本地获取token
+		var token = localStorage.getItem("token_user_uuid");
+		// 获取登录的用户的id
+		var uid = localStorage.getItem("token_user_uid");
+		queryAll();
+
+		// 不分页列出购物车内所有商品
+        function queryAll(){
+            $.ajax({
+                async:false,
+                url:"http://localhost/cart/queryAll",
+                type:"get",
+                headers:{
+                    token:token
+                },
+                data:{
+					uId:uid,
+                },
+                success:function(respTxt){
+					// 购物车为空
+					if(respTxt.status == 1){
+						var cartEmptyDiv = $("<h2 style='height:520px;width:100%;line-height:520px;text-align:center;font-size:32px'>购物车为空，<a href='index.html' style='color:red;text-decoration:underline;'>去购物</a></h2>");
+						$(".aui-list-product-float-item").append(cartEmptyDiv);
+					} else{
+						
+					// 对应购物车的所有商品
+                    var goodsList = respTxt.data;
+
+                    //插入个商品
+                    for(var goods of goodsList){
+						// 一个商品一个大li
+						var goodsLi = $("<li class='car-box-list-ul-li'></li>");
+						// 分割商品的横条
+						var goodsLine = $("<div class='aui-dri'></div>");
+						// 一个商品一个大div
+						var goodsDiv = $("<div class='aui-car-box-list-item'></div>");
+
+						// 选择框
+						var goodsChecked = $("<input type='checkbox' class='check goods-check goodsCheck'>");
+
+						// 定义商品图片
+						// 一个图片放在一个单独的div
+						var imgDiv = $("<div class='aui-car-box-list-img'></div>");
+						// 存放图片的a标签
+						var imgA = $("<a></a>");
+						// 商品图片
+						var imgPath = goods.gpic.substring(goods.gpic.lastIndexOf("img")+4);
+						var goodsImg = $("<img src='http://localhost/img/"+ imgPath +"'>");
+
+						// 商品信息
+						// 商品信息div
+						var detailDiv = $("<div class='aui-car-box-list-text'></div>");
+						// 商品名
+						var detailName = $("<h4 class = 'goodsName'><a>"+ goods.gname +"</a></h4>");
+						// 商品价格
+						var detailPrice = $("<p class = 'goodsPriceP'>￥<b class = 'goodsPriceText'>"+ goods.gprice +"</b></p>");
+						
+						// 移出购物车
+						var goodsRemoveDiv = $("<div></div>");
+						var goodsRemovebtn = $("<button class='rmButtonCla'>移出购物车</button>");
+						// 商品对应购物车信息的唯一标识id，并设置display:none
+						var theOneId = $("<span class='theOneId' style='display:none'>"+ goods.g1 +"</span>");
+						// 加减数量div
+						var numDiv = $("<div class='aui-car-box-list-text-arithmetic  numDicClass'></div>");
+						// 减 按钮
+						var numSub = $("<a href='javascript:;' class='minus'>-</a>");
+						// 数量
+						var oneGoodsNum = $("<span class='num'>"+ goods.g2 +"</span>")
+						// 加 按钮
+						var numAdd = $("<a href='javascript:;' class='plus'>+</a>");
+
+                        // 插入到页面 操作
+                    $(".car-box-list-ul").append(goodsLi);
+					goodsLi.append(goodsDiv);
+					goodsLi.append(goodsLine);
+					// 商品div
+					goodsDiv.append(goodsChecked);
+					goodsDiv.append(imgDiv);
+					goodsDiv.append(detailDiv);
+					// 图片div
+					imgDiv.append(imgA);
+					imgA.append(goodsImg);
+					// 商品信息
+					detailDiv.append(detailName);
+					detailDiv.append(detailPrice);
+					detailDiv.append(goodsRemoveDiv);
+					goodsRemoveDiv.append(theOneId);
+					goodsRemoveDiv.append(goodsRemovebtn);
+					detailDiv.append(numDiv);
+					// 商品加减数量
+					numDiv.append(numSub);
+					numDiv.append(oneGoodsNum);
+					numDiv.append(numAdd);
+                	}
+                }
+				
+			}
+            })
+        }
+
+		// 将商品移出购物车
+		$(".rmButtonCla").click(function(){
+			var flag = window.confirm("是否将此商品移出购物车？");
+            if(!flag){
+                return;
+            }
+            //获取此条id
+            var theOneDiv1 = $(this).prev();
+			var carId = theOneDiv1.html();
+            //后台删除
+            $.ajax({
+                url:"http://localhost/cart/deleteByCarId",
+                type:"post",
+				headers:{
+					token:token
+				},
+                data:{
+					carId:carId
+                },
+                success:function(respTxt){
+                    if(respTxt.status == 1){
+                        alert("移出成功");
+                        //前台页面删除
+                        var div = theOneDiv1.parent().parent().parent().parent();
+                        div.remove();
+                    } else{
+                        alert("移出失败");
+                        return;
+                    }
+                }
+            })
+            })
+
+		// 购物车为空  给与提示
+		function cartIsEmpty(){
+			var boxsChecked = $(".goodsCheck");
+			if(boxsChecked.length == 0){
+				var cartEmptyDiv = $("<h2 style='height:520px;width:100%;line-height:520px;text-align:center;font-size:32px'>购物车为空，<a href='index.html' style='color:red;text-decoration:underline;'>去购物</a></h2>");
+				$(".car-box-list-ul").append(cartEmptyDiv);
+			}
+		}
+
+
+		// 点击结算按钮
+		function jiesuanButton(){
+			var boxsChecked = $(".goodsCheck:checked");//购物车中所有商品组成的集合
+			// 选择商品在购物车中的编号
+			var goodsChecked = new Array();
+			boxsChecked.each(function(){
+				goodsChecked.push($(this).next().next().find(".theOneId").html());
+			})
+			if(boxsChecked.length == 0){
+				alert("请先选择商品");
+				return;
+			} else{
+				// 跳到订单生成页面，并把选中的商品的集合附在date中
+				// 选中的商品组成的数组放在date传给后端
+
+				$.ajax({
+					url:"http://localhost/cart/updateCar1",
+					type:"post",
+					headers:{
+						token:token
+					},
+					data:{
+						goodsChecked:goodsChecked
+					},
+					traditional:true,
+					success:function(respTxt){
+						if(respTxt.status == 1){
+							// 总价通过href传给order.html页面
+
+							location.href="order.html?totalprice="+$("#AllTotal").html();
+						} else{
+							alert("似乎出现了点问题");
+							return;
+						}
+					}
+				})
+			}
+		}
+
+
+		// 数量减
+			$(".minus").click(function() {
+				var t = $(this).parent().find('.num');
+				t.text(parseFloat(t.text()) - 1);
+				var numId = t.html();
+				var carId = $(this).parent().prev().find(".theOneId").html();
+				$.ajax({
+					url:"http://localhost/cart/updateNum",
+					type:"post",
+					headers:{
+							token:token
+					},
+					data:{
+						carId:carId,
+						numId:numId
+					},
+					success:function(respTxt){
+					}
+				})
+				if (t.text() <= 1) {
+					t.text(1);
+				}
+				TotalPrice();
+			});
+
+			// 数量加
+			$(".plus").click(function() {
+				var t = $(this).parent().find('.num');
+				t.text(parseFloat(t.text()) + 1);
+				var numId = t.html();
+				var carId = $(this).parent().prev().find(".theOneId").html();
+			$.ajax({
+					url:"http://localhost/cart/updateNum",
+					type:"post",
+					headers:{
+							token:token
+					},
+					data:{
+						carId:carId,
+						numId:numId
+					},
+					success:function(respTxt){
+					}
+				})
+				if (t.text() <= 1) {
+					t.text(1);
+				}
+				TotalPrice();
+			});
+			/******------------分割线-----------------******/
+			// 点击商品按钮
+		$(".goodsCheck").click(function() {
+			var goods = $(this).closest(".aui-car-box").find(".goodsCheck"); //获取本店铺的所有商品
+			var goodsC = $(this).closest(".aui-car-box").find(".goodsCheck:checked"); //获取本店铺所有被选中的商品
+			if (goods.length == goodsC.length) { //如果选中的商品等于所有商品
+				$("#AllCheck").prop('checked', true); //全选按钮被选中
+				TotalPrice();
+			} else { //如果选中的商品不等于所有商品
+			$("#AllCheck").prop('checked', false); //全选按钮也不被选中
+			// 计算
+			TotalPrice();
+			// 计算
+			}
+		});
+		// 点击全选按钮
+		$("#AllCheck").click(function() {
+			if ($(this).prop("checked") == true) { //如果全选按钮被选中
+			$(".goods-check").prop('checked', true); //所有按钮都被选中
+			TotalPrice();
+			} else {
+			$(".goods-check").prop('checked', false); //else所有按钮不全选
+			TotalPrice();
+			}
+			$(".shopCheck").change(); //执行店铺全选的操作
+		});
+			//计算
+		function TotalPrice() {
+			var allprice = 0; //总价
+			var checkB = $(".goodsCheck");//购物车中所有商品组成的集合
+			checkB.each(function() { //循环购物车里的商品
+				if ($(this).prop("checked") == true) { //如果该商品被选中
+					var num = parseInt($(this).parent().find(".numDicClass").find(".num").text()); //得到商品的数量
+					var price = parseFloat($(this).parent().find(".goodsPriceText").text()); //得到商品的单价
+					var total = price * num; //计算单个商品的总价
+					allprice += total; //计算总价
+				}
+			});
+			$("#AllTotal").html(allprice); //输出全部总价
+		}
+	</script>
+
+</body>
+</html>
